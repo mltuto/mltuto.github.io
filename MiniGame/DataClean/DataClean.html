@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Spring Clean // Cybernetic Purification (Live)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #0a0a1a;
+            color: #00ffff;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+            animation: background-pulse 15s infinite alternate;
+        }
+
+        @keyframes background-pulse {
+            0% { background-color: #0a0a1a; }
+            100% { background-color: #1a0a1a; }
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #ff00ff, 0 0 35px #ff00ff, 0 0 40px #ff00ff, 0 0 50px #ff00ff, 0 0 75px #ff00ff;
+            animation: flicker 2s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #ff00ff, 0 0 35px #ff00ff, 0 0 40px #ff00ff, 0 0 50px #ff00ff, 0 0 75px #ff00ff;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+            }
+        }
+
+        video {
+            display: block;
+            margin: 20px auto;
+            max-width: 90%;
+            border: 3px solid #ff00ff;
+            box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+        }
+
+        table {
+            width: 95%;
+            margin: 40px auto;
+            border-collapse: collapse;
+            box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+        }
+
+        th, td {
+            border: 1px solid #330033;
+            padding: 15px;
+            text-align: left;
+            background-color: #1a1a3a;
+        }
+
+        th {
+            background-color: #330066;
+            color: #00ffff;
+            text-transform: uppercase;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease-in-out;
+        }
+
+        tbody tr:hover {
+            background-color: #330066;
+            transform: scale(1.02);
+            box-shadow: 0 0 8px #ff00ff;
+        }
+
+        .status {
+            position: relative;
+            overflow: hidden;
+            min-width: 100px; /* Ensure space for the bar */
+        }
+
+        .status.done {
+             color: #00ff00; /* Green for Done */
+             font-weight: bold;
+             animation: none; /* Stop vibrate animation */
+        }
+
+        .status:not(.done) {
+             animation: vibrate 0.5s infinite alternate;
+             color: #ffff00; /* Yellowish for Processing */
+        }
+
+
+        @keyframes vibrate {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-2px) rotate(0.5deg); }
+            100% { transform: translateX(2px) rotate(-0.5deg); }
+        }
+
+        .status:not(.done)::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%; /* Start off-screen */
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0, 255, 255, 0.3), rgba(255, 0, 255, 0.3));
+            animation: status-bar 3s infinite linear;
+        }
+
+         /* Remove the bar when done */
+        .status.done::before {
+            content: none;
+        }
+
+
+        @keyframes status-bar {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Styling for the step title */
+        .step-title {
+            font-weight: bold;
+            color: #ff00ff; /* Magenta for processing */
+            transition: color 0.5s ease-in-out; /* Smooth color transition */
+        }
+
+        /* Styling for the step title when the step is done */
+        .step-title.step-done {
+            color: #00ff00; /* Neon Green when done */
+            text-shadow: none; /* Remove potential glow from processing state */
+        }
+
+
+        .gcp-icons {
+            display: flex;
+            gap: 10px;
+            font-size: 1.5em;
+        }
+
+        .gcp-icon {
+            text-shadow: 0 0 5px #00ffff;
+            transition: text-shadow 0.3s ease;
+        }
+
+        .gcp-icon:hover {
+             text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <video controls autoplay loop muted>
+        <source src="SpringClean.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <h1>The Data Cleaning Pipeline // Circuit Purification Protocol</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Cleaning Step</th>
+                <th>GCP Offers</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="status done">Done</td>
+                <td><span class="step-title step-done">1. Data Collection</span><br>Gather large-scale datasets from diverse sources such as web pages, books, articles, code repositories, and more.</td>
+                <td class="gcp-icons">
+                    <span class="gcp-icon" title="BigQuery">BigQuery</span>
+                    <span class="gcp-icon" title="Dataflow">GCS</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="status">Processing...</td>
+                <td><span class="step-title">2. Data Deduplication</span><br>Remove duplicate content to avoid over-representation of specific data and reduce model bias.</td>
+                 <td class="gcp-icons">
+                    <span class="gcp-icon" title="Dataflow">Dataflow</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="status">Processing...</td>
+                <td><span class="step-title">3. Data Filtering</span><br>Filter out low-quality, irrelevant, or non-text data (e.g., images, corrupted files).</td>
+                 <td class="gcp-icons">
+                    <span class="gcp-icon" title="BigQuery">DatafLow</span>
+                    <span class="gcp-icon" title="Dataflow">DataProc</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="status">Processing...</td>
+                <td><span class="step-title">4. PII (Personally Identifiable Information) Removal</span><br>Detect and remove sensitive information such as names, addresses, phone numbers, emails, and other personal identifiers to protect privacy.</td>
+                 <td class="gcp-icons">
+                    <span class="gcp-icon" title="DLP API">DLP API</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="status">Processing...</td>
+                <td><span class="step-title">5. Toxicity and Harmful Content Removal</span><br>Identify and filter out toxic, hateful, violent, or otherwise harmful language using automated classifiers and human review.</td>
+                 <td class="gcp-icons">
+                    <span class="gcp-icon" title="BigQuery">BigQuery ML</span>
+                    <span class="gcp-icon" title="Dataflow">Vertex AI</span>
+                    <span class="gcp-icon" title="DLP API">NL Saftey API</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="status">Processing...</td>
+                <td><span class="step-title">6. Content Moderation and Policy Enforcement</span><br>Enforce company-specific policies (e.g., removing illegal content, misinformation, copyrighted material).</td>
+                 <td class="gcp-icons">
+                    <span class="gcp-icon" title="Gemini">Gemini</span>
+                </td>
+            </tr>
+             <tr>
+                <td class="status">Processing...</td>
+                <td><span class="step-title">7. Language and Domain Filtering</span><br>Select or balance data by language, topic, or domain to ensure diversity and relevance for the intended use case.</td>
+                 <td class="gcp-icons">
+                    <span class="gcp-icon" title="BigQuery">BigQuery</span>
+                    <span class="gcp-icon" title="Dataflow">Dataflow</span>
+                    <span class="gcp-icon" title="Vertex AI">Vertex AI Vector Search</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="status">Processing...</td>
+                <td><span class="step-title">8. Data Augmentation and Enrichment</span><br>Enhance data quality by paraphrasing, translating, or adding metadata (e.g., labels for supervised tasks).</td>
+                 <td class="gcp-icons">
+                    <span class="gcp-icon" title="Gemini">Gemini</span>
+                    <span class="gcp-icon" title="Gemma">Gemma</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="status">Processing...</td>
+                <td><span class="step-title">9. Formatting and Tokenization</span><br>Convert text into a format suitable for model training, including tokenization and splitting into training, validation, and test sets.</td>
+                 <td class="gcp-icons">
+                    <span class="gcp-icon" title="BigQuery">BigQuery</span>
+                    <span class="gcp-icon" title="Dataflow">Dataflow</span>                </td>
+            </tr>
+            <tr>
+                <td class="status">Processing...</td>
+                <td><span class="step-title">10. Final Quality Checks</span><br>Conduct manual and automated audits to ensure data cleanliness, diversity, and compliance with ethical guidelines.</td>
+                 <td class="gcp-icons">
+                    <span class="gcp-icon" title="BigQuery">BigQuery</span>
+                    <span class="gcp-icon" title="Dataflow">Dataflow</span>
+                    <span class="gcp-icon" title="Dataplex">Dataplex</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tableRows = document.querySelectorAll('tbody tr');
+            let currentStepIndex = 1; // Start from the second row (index 1)
+
+            function completeNextStep() {
+                // Stop if all steps are done
+                if (currentStepIndex >= tableRows.length) {
+                    console.log("All data cleaning steps complete!");
+                    return;
+                }
+
+                const currentRow = tableRows[currentStepIndex];
+                const statusCell = currentRow.querySelector('.status');
+                const stepTitleSpan = currentRow.querySelector('.step-title');
+
+
+                // Update the status cell
+                statusCell.textContent = 'Done';
+                statusCell.classList.add('done');
+
+                // Update the step title span
+                if (stepTitleSpan) {
+                    stepTitleSpan.classList.add('step-done');
+                }
+
+
+                // Move to the next step
+                currentStepIndex++;
+
+                // Schedule the next step completion after 30 seconds
+                if (currentStepIndex < tableRows.length) {
+                    setTimeout(completeNextStep, 3000); // 30000 milliseconds = 30 seconds
+                } else {
+                     console.log("Scheduled final step completion.");
+                }
+            }
+
+            // Start the process after an initial delay (e.g., 30 seconds until step 2 becomes done)
+            setTimeout(completeNextStep, 3000);
+        });
+    </script>
+
+</body>
+</html>
