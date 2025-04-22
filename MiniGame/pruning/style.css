@@ -1,71 +1,211 @@
-/* Keep your existing CSS */
+/* Cyberpunk Synthwave Styles */
+:root {
+    --background-dark: #0d0221; /* Deep purple/blue */
+    --neon-cyan: #00f0ff;
+    --neon-magenta: #ff00ff;
+    --neon-yellow: #f9f871;
+    --neon-pink: #ff1ff9;
+    --neon-blue: #0aefff;
+    --text-glow: 0 0 5px var(--neon-cyan), 0 0 8px var(--neon-cyan);
+    --text-glow-magenta: 0 0 5px var(--neon-magenta), 0 0 8px var(--neon-magenta);
+    --text-glow-yellow: 0 0 5px var(--neon-yellow), 0 0 8px var(--neon-yellow);
+     --disabled-color: rgba(255, 0, 255, 0.4); /* Faded Magenta for useless example */
+}
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f0f0f0;
-    font-family: sans-serif;
+    background-color: var(--background-dark);
+    /* Optional: Add a subtle grid or gradient background */
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    font-family: 'Orbitron', sans-serif; /* Futuristic font */
+    color: var(--neon-cyan);
     margin: 0;
+    padding: 20px; /* Add padding for smaller screens */
+    box-sizing: border-box;
 }
 
 .game-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: rgba(13, 2, 33, 0.6); /* Slightly transparent dark */
+    padding: 30px 40px;
+    border-radius: 10px;
+    border: 1px solid var(--neon-magenta);
+    box-shadow: 0 0 15px var(--neon-magenta), inset 0 0 10px rgba(255, 0, 255, 0.5);
     text-align: center;
+    max-width: 700px; /* Limit container width */
+    width: 100%;
 }
 
 h1 {
     margin-top: 0;
-    color: #333;
+    margin-bottom: 25px;
+    color: var(--neon-yellow);
+    font-weight: 700;
+    font-size: 2.5em;
+    text-shadow: 0 0 7px var(--neon-yellow), 0 0 10px var(--neon-yellow), 0 0 3px #fff; /* Enhanced glow */
+    letter-spacing: 2px;
+}
+
+.instructions {
+    color: var(--neon-cyan);
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-size: 0.95em;
+    text-shadow: var(--text-glow);
+}
+
+.instructions .label-highlight {
+    color: var(--neon-magenta);
+    font-weight: bold;
+     text-shadow: var(--text-glow-magenta);
+}
+
+.useless-example {
+     color: var(--disabled-color);
+     font-style: italic;
+     /* Can't easily apply text-shadow to RGBA with alpha */
+}
+
+
+#nnCanvas {
+    border: 1px solid var(--neon-blue); /* Neon border */
+    background-color: transparent; /* See through to body background */
+    display: block;
+    margin: 0 auto 25px auto;
+    box-shadow: 0 0 10px var(--neon-blue);
+    max-width: 100%; /* Make canvas responsive */
+    height: auto; /* Maintain aspect ratio */
 }
 
 .controls {
+    margin-top: 20px;
     margin-bottom: 15px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: space-around; /* Space out controls */
+    gap: 25px;
+    flex-wrap: wrap; /* Allow wrapping */
+     border-top: 1px dashed var(--neon-magenta);
+     padding-top: 25px;
 }
 
-.controls label {
-    font-weight: bold;
+.label-highlight {
+     color: var(--neon-magenta);
+     font-weight: bold;
+     display: block; /* Make label take full width */
+     margin-bottom: 8px;
+     text-shadow: var(--text-glow-magenta);
 }
 
-#nnCanvas {
-    border: 1px solid #ccc;
-    background-color: #eee;
+.quantization-control {
+    text-align: center;
+}
+
+.quant-desc {
+    font-size: 0.85em;
+    color: var(--neon-cyan);
     display: block;
-    margin: 0 auto 15px auto;
+    margin-bottom: 15px;
+    max-width: 300px; /* Limit width */
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.8;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+
+/* Slider Styles */
+input[type="range"] {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 150px; /* Fixed width for slider */
+    height: 8px; /* Track height */
+    background: rgba(0, 240, 255, 0.3); /* Faded cyan track */
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    border: 1px solid var(--neon-cyan);
+}
+
+/* Chrome, Edge, Safari */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--neon-yellow);
+    border-radius: 50%;
+    border: 1px solid var(--background-dark);
+    cursor: pointer;
+    box-shadow: 0 0 8px var(--neon-yellow);
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--neon-yellow);
+    border-radius: 50%;
+    border: 1px solid var(--background-dark);
+    cursor: pointer;
+    box-shadow: 0 0 8px var(--neon-yellow);
+}
+
+#precision-label {
+    font-weight: bold;
+    color: var(--neon-yellow);
+    text-shadow: var(--text-glow-yellow);
+    min-width: 45px; /* Ensure space for label */
+    text-align: left;
 }
 
 .memory-info {
     font-weight: bold;
-    color: #007bff;
-    /* Updated display to potentially stack percentage below */
+    color: var(--neon-cyan);
+    text-shadow: var(--text-glow);
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 5px; /* Space between lines */
+     min-width: 150px; /* Ensure some minimum width */
 }
 
+
 #memory-display {
-    display: inline-block; /* Ensure it doesn't take full width in flex column */
-    margin-bottom: 5px; /* Space between value and percentage */
+    font-size: 1.3em; /* Make value larger */
+    color: var(--neon-yellow); /* Highlight value */
+    text-shadow: var(--text-glow-yellow);
 }
 
 #saved-percentage {
-    font-size: 0.9em;
-    color: #28a745; /* Green color for savings */
-    display: inline-block; /* Ensure it doesn't take full width */
+    font-size: 0.95em;
+    color: var(--neon-pink); /* Use pink for savings */
+    text-shadow: 0 0 5px var(--neon-pink);
 }
 
-
-.info {
-    font-size: 0.9em;
-    color: #666;
-    max-width: 600px; /* Limit info width */
-    margin: 0 auto;
+/* Media query for smaller screens if needed */
+@media (max-width: 600px) {
+    .game-container {
+        padding: 20px;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+     .quantization-control, .memory-info {
+         width: 100%; /* Take full width in column */
+     }
 }

@@ -5,39 +5,69 @@ const precisionLabel = document.getElementById('precision-label');
 const memoryDisplay = document.getElementById('memory-display');
 const savedPercentageDisplay = document.getElementById('saved-percentage'); // Get the new span
 
-canvas.width = 600;
-canvas.height = 400;
+// Responsive Canvas Size (optional but recommended)
+function resizeCanvas() {
+    const container = canvas.parentElement; // Or specific container div
+    const style = getComputedStyle(container);
+    const containerWidth = parseInt(style.width) - parseInt(style.paddingLeft) - parseInt(style.paddingRight);
+
+    // Maintain an aspect ratio, e.g., 3:2
+    const aspectRatio = 2 / 3;
+    canvas.width = Math.min(containerWidth, 600); // Max width of 600px
+    canvas.height = canvas.width * aspectRatio;
+
+    // Recreate network if size changes significantly (or adjust coordinates)
+    createNetwork(); // Need to recreate based on new size
+    drawNetwork();
+    calculateMemory(); // Recalculate based on potentially reset network
+}
+
+
+// --- Theme Colors ---
+const colors = {
+    background: '#0d0221', // Match CSS body
+    connection: 'rgba(0, 240, 255, 0.2)', // Faint cyan
+    neuronActiveFill: 'rgba(10, 239, 255, 0.8)', // Bright Cyan
+    neuronActiveStroke: 'rgba(10, 239, 255, 1)',
+    neuronUselessFill: 'rgba(255, 0, 255, 0.4)', // Faded Magenta
+    neuronUselessStroke: 'rgba(255, 0, 255, 0.6)',
+    neuronVibrateFill: 'rgba(249, 248, 113, 0.9)', // Neon Yellow
+    neuronVibrateStroke: 'rgba(249, 248, 113, 1)',
+    glowActive: 'rgba(10, 239, 255, 0.7)',
+    glowUseless: 'rgba(255, 0, 255, 0.5)',
+    glowVibrate: 'rgba(249, 248, 113, 0.8)',
+};
+const glowBlur = 8; // How much glow effect
 
 // --- Network Configuration (Visual) ---
-const layerSizes = [8, 12, 12, 8, 4]; // Neurons per layer in the visualization
-const neuronRadius = 8;
-const uselessThreshold = 0.2; // Conceptual weight threshold for uselessness (lower means more useless)
+const layerSizes = [8, 12, 12, 8, 4]; // Neurons per layer
+const neuronRadius = 7; // Slightly smaller radius might look better with glow
+const uselessThreshold = 0.2; // Conceptual weight threshold
 
 // --- Simulated Model Configuration ---
 const baseParameterCount = 70e9; // 70 Billion parameters
-// We assume the base memory (140GB) corresponds to FP16 (2 bytes)
-const basePrecisionBytes = 2; // FP16 is 2 bytes
+const basePrecisionBytes = 2; // Assuming base is BF16/FP16
 
 // --- Data Type Configuration (Bytes per Parameter) ---
 const precisionLevels = {
-    0: { name: 'FP32', bytesPerParameter: 4 }, // 2x base FP16
-    1: { name: 'BF16', bytesPerParameter: 2 }, // 1x base FP16
-    2: { name: 'INT8', bytesPerParameter: 1 }, // 0.5x base FP16
-    3: { name: 'INT4', bytesPerParameter: 0.5 } // 0.25x base FP16 (conceptual)
+    0: { name: 'FP32', bytesPerParameter: 4 },
+    1: { name: 'BF16', bytesPerParameter: 2 },
+    2: { name: 'INT8', bytesPerParameter: 1 },
+    3: { name: 'INT4', bytesPerParameter: 0.5 }
 };
 let currentPrecisionLevel = parseInt(precisionSlider.value);
 let currentPrecision = precisionLevels[currentPrecisionLevel];
 
 // --- Network Data Structure (Visual) ---
-let layers = []; // Array of arrays of neuron objects
-let connections = []; // Array of connection objects
-let initialActiveVisualNeurons = 0; // Total visual neurons at start
+let layers = [];
+let connections = [];
+let initialActiveVisualNeurons = 0;
 
 // --- Simulated Model State ---
 let currentParameterCount = baseParameterCount;
-let parametersPerVisualNeuron = 0; // How many parameters each visual neuron represents
+let parametersPerVisualNeuron = 0;
 
-// --- Baseline Memory (Full model at FP32) ---
+// --- Baseline Memory (Full model at FP32 for savings calculation) ---
 const baseFP32MemoryGB = (baseParameterCount * precisionLevels[0].bytesPerParameter) / (1024 ** 3);
 
 
@@ -45,7 +75,7 @@ const baseFP32MemoryGB = (baseParameterCount * precisionLevels[0].bytesPerParame
 let vibratingNeuron = null;
 let vibrationStartTime = 0;
 const vibrationDuration = 300; // ms
-const vibrationMagnitude = 5; // Increased pixels for vibration
+const vibrationMagnitude = 4; // Slightly reduced magnitude
 
 // --- Functions ---
 
@@ -56,21 +86,24 @@ function createNetwork() {
 
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
-    const xPadding = 50;
-    const yPadding = 30;
+    const xPadding = canvasWidth * 0.1; // Relative padding
+    const yPadding = canvasHeight * 0.1;
     const layerSpacing = (canvasWidth - 2 * xPadding) / (layerSizes.length - 1);
 
     // Create Layers and Neurons
     for (let i = 0; i < layerSizes.length; i++) {
         layers[i] = [];
         const numNeurons = layerSizes[i];
-        const neuronSpacing = (canvasHeight - 2 * yPadding) / (numNeurons > 1 ? numNeurons - 1 : 1);
+        const layerHeight = canvasHeight - 2 * yPadding;
+        // Adjust spacing calculation to prevent division by zero for single-neuron layers
+        const neuronSpacing = numNeurons > 1 ? layerHeight / (numNeurons - 1) : 0;
+
 
         for (let j = 0; j < numNeurons; j++) {
             const x = xPadding + i * layerSpacing;
-            const y = yPadding + j * neuronSpacing + (numNeurons === 1 ? (canvasHeight - 2 * yPadding) / 2 : 0); // Center single neuron layers
+             // Calculate y position, centering single neurons or distributing others
+            const y = numNeurons === 1 ? yPadding + layerHeight / 2 : yPadding + j * neuronSpacing;
 
-            // Assign conceptual weight magnitude
             const conceptualWeightMagnitude = Math.random();
             const isUseless = conceptualWeightMagnitude < uselessThreshold;
 
@@ -79,32 +112,33 @@ function createNetwork() {
                 y: y,
                 radius: neuronRadius,
                 isUseless: isUseless,
-                isActive: true, // Initially all active
-                baseX: x, // For vibration
-                baseY: y  // For vibration
+                isActive: true,
+                baseX: x,
+                baseY: y
             };
              if (layers[i][j].isActive) {
-                initialActiveVisualNeurons++;
-            }
+                 initialActiveVisualNeurons++;
+             }
         }
     }
 
-    // Calculate how many parameters each visual neuron represents
-    // This is based on the initial *total* number of visual neurons
-    parametersPerVisualNeuron = baseParameterCount / initialActiveVisualNeurons;
-    currentParameterCount = baseParameterCount; // Reset simulated parameter count
+    // Calculate parameters per visual neuron based on initial active count
+     if (initialActiveVisualNeurons > 0) {
+        parametersPerVisualNeuron = baseParameterCount / initialActiveVisualNeurons;
+    } else {
+        parametersPerVisualNeuron = 0; // Avoid division by zero
+    }
+    currentParameterCount = baseParameterCount;
 
-    // Create Connections between adjacent layers
+    // Create Connections
     for (let i = 0; i < layers.length - 1; i++) {
         const currentLayer = layers[i];
         const nextLayer = layers[i + 1];
         for (let j = 0; j < currentLayer.length; j++) {
             for (let k = 0; k < nextLayer.length; k++) {
                 connections.push({
-                    fromLayer: i,
-                    fromNeuron: j,
-                    toLayer: i + 1,
-                    toNeuron: k
+                    fromLayer: i, fromNeuron: j,
+                    toLayer: i + 1, toNeuron: k
                 });
             }
         }
@@ -113,123 +147,133 @@ function createNetwork() {
 
 function drawNetwork() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Optional: Fill canvas background if needed, otherwise it's transparent
+    // ctx.fillStyle = colors.background; // Or a slightly different shade
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Connections (only between active neurons)
-    ctx.strokeStyle = '#999';
-    ctx.lineWidth = 1;
+
+    // --- Draw Connections ---
+    ctx.strokeStyle = colors.connection;
+    ctx.lineWidth = 0.5; // Thinner lines
+    ctx.shadowBlur = 0; // No glow for connections
     connections.forEach(conn => {
         const from = layers[conn.fromLayer][conn.fromNeuron];
         const to = layers[conn.toLayer][conn.toNeuron];
 
-        // Check if both connected neurons are active
         if (from.isActive && to.isActive) {
-             // Check if either neuron is currently vibrating to potentially hide connections
-            const fromIsVibrating = vibratingNeuron && from === vibratingNeuron;
-            const toIsVibrating = vibratingNeuron && to === vibratingNeuron;
-
-            // Only draw connection if neither end is currently vibrating (simplification for visual clarity)
-            if (!fromIsVibrating && !toIsVibrating) {
+             // Only draw if not currently vibrating (cleaner look)
+             const fromIsVibrating = vibratingNeuron && from === vibratingNeuron;
+             const toIsVibrating = vibratingNeuron && to === vibratingNeuron;
+             if (!fromIsVibrating && !toIsVibrating) {
                 ctx.beginPath();
-                ctx.moveTo(from.x, from.y);
+                ctx.moveTo(from.x, from.y); // Use current potentially vibrated pos
                 ctx.lineTo(to.x, to.y);
                 ctx.stroke();
-            }
+             }
         }
     });
 
-    // Draw Neurons
+    // --- Draw Neurons ---
+    ctx.lineWidth = 1; // Reset line width for neuron strokes
     layers.forEach(layer => {
         layer.forEach(neuron => {
             if (neuron.isActive) {
-                 // Save current state before potential vibration drawing
-                ctx.save();
+                ctx.save(); // Save context state
 
-                // If this neuron is vibrating, apply vibration offset and red color
+                // Set glow and colors based on state
                 if (neuron === vibratingNeuron) {
-                     // Translation for vibration
-                    ctx.translate(neuron.x - neuron.baseX, neuron.y - neuron.baseY);
-                    ctx.fillStyle = 'rgba(220, 53, 69, 0.9)'; // Red color
-                    ctx.strokeStyle = 'rgba(220, 53, 69, 1)';
+                    ctx.fillStyle = colors.neuronVibrateFill;
+                    ctx.strokeStyle = colors.neuronVibrateStroke;
+                    ctx.shadowColor = colors.glowVibrate;
+                    ctx.shadowBlur = glowBlur + 4; // Extra glow when vibrating
+                } else if (neuron.isUseless) {
+                    ctx.fillStyle = colors.neuronUselessFill;
+                    ctx.strokeStyle = colors.neuronUselessStroke;
+                    ctx.shadowColor = colors.glowUseless;
+                    ctx.shadowBlur = glowBlur;
                 } else {
-                     // Normal color based on uselessness
-                    if (neuron.isUseless) {
-                        ctx.fillStyle = 'rgba(0, 123, 255, 0.5)'; // Faded blue
-                        ctx.strokeStyle = 'rgba(0, 123, 255, 0.7)';
-                    } else {
-                        ctx.fillStyle = 'rgba(40, 167, 69, 0.8)'; // Green
-                        ctx.strokeStyle = 'rgba(40, 167, 69, 1)';
-                    }
-                     // No translation if not vibrating, draw at base position
-                    ctx.translate(neuron.baseX, neuron.baseY);
+                    ctx.fillStyle = colors.neuronActiveFill;
+                    ctx.strokeStyle = colors.neuronActiveStroke;
+                    ctx.shadowColor = colors.glowActive;
+                    ctx.shadowBlur = glowBlur;
                 }
 
+                // Apply vibration offset if needed
+                // Note: We draw at the potentially vibrated (neuron.x, neuron.y)
+                // The vibration function updates these coordinates.
 
                 ctx.beginPath();
-                // Draw the circle at (0,0) in the translated context
-                ctx.arc(0, 0, neuron.radius, 0, Math.PI * 2);
-
-
+                // Draw circle at its current position (neuron.x, neuron.y)
+                ctx.arc(neuron.x, neuron.y, neuron.radius, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.stroke();
 
-                // Restore context to remove translation for the next draw
-                ctx.restore();
+                ctx.restore(); // Restore context (removes shadow settings)
             }
         });
     });
+     // Reset shadow for next frame/draw cycle if needed outside this function
+     ctx.shadowBlur = 0;
 }
+
 
 function calculateMemory() {
     const bytesPerParameter = currentPrecision.bytesPerParameter;
-    const totalBytes = currentParameterCount * bytesPerParameter;
-    const totalGB = totalBytes / (1024 ** 3); // Convert bytes to GB
+    // Ensure currentParameterCount is not negative (edge case)
+    const safeParameterCount = Math.max(0, currentParameterCount);
+    const totalBytes = safeParameterCount * bytesPerParameter;
+    const totalGB = totalBytes / (1024 ** 3);
     memoryDisplay.textContent = `${totalGB.toFixed(2)} GB`;
 
-    // Calculate percentage saved
     let percentageSaved = 0;
-    if (baseFP32MemoryGB > 0) { // Avoid division by zero
-         percentageSaved = ((baseFP32MemoryGB - totalGB) / baseFP32MemoryGB) * 100;
+    if (baseFP32MemoryGB > 0) {
+        percentageSaved = ((baseFP32MemoryGB - totalGB) / baseFP32MemoryGB) * 100;
     }
+    // Ensure percentage is within reasonable bounds (0-100 or slightly more if base wasn't FP32)
+    percentageSaved = Math.max(0, percentageSaved);
 
-    // Ensure percentage is not negative if memory somehow increases beyond base FP32 (e.g. if base was FP16)
-    // Although in this setup, baseFP32MemoryGB is the highest possible memory.
-     savedPercentageDisplay.textContent = `${percentageSaved.toFixed(2)}% saved`;
+    savedPercentageDisplay.textContent = `( ${percentageSaved.toFixed(2)}% saved )`; // Added parenthesis like original
 
-     // Optional: Change color of percentage text based on value
-     if (percentageSaved > 0) {
-         savedPercentageDisplay.style.color = '#28a745'; // Green
-     } else if (percentageSaved < 0) {
-         savedPercentageDisplay.style.color = '#dc3545'; // Red (shouldn't happen with this baseline)
-     } else {
-         savedPercentageDisplay.style.color = '#666'; // Grey or default
-     }
+    // Style based on savings (using CSS variables might be cleaner but direct style is fine here)
+    if (percentageSaved > 50) {
+         savedPercentageDisplay.style.color = 'var(--neon-pink)'; // Use pink for high savings
+    } else if (percentageSaved > 0) {
+         savedPercentageDisplay.style.color = 'var(--neon-yellow)'; // Yellow for moderate
+    }
+     else {
+        savedPercentageDisplay.style.color = 'var(--neon-cyan)'; // Default cyan if no savings
+    }
 }
 
 function getClickedNeuron(event) {
     const rect = canvas.getBoundingClientRect();
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;    // Relationship bitmap vs. element for accurate clicking
+    const scaleY = canvas.height / rect.height;
+
+    const mouseX = (event.clientX - rect.left) * scaleX;
+    const mouseY = (event.clientY - rect.top) * scaleY;
+
 
     for (let i = 0; i < layers.length; i++) {
         for (let j = 0; j < layers[i].length; j++) {
             const neuron = layers[i][j];
             if (neuron.isActive) {
-                // Use base position for click detection
+                 // Click detection based on base position, more reliable during vibration
                 const distance = Math.sqrt((mouseX - neuron.baseX) ** 2 + (mouseY - neuron.baseY) ** 2);
-                if (distance <= neuron.radius) {
+                if (distance <= neuron.radius + 3) { // Add slight tolerance
                     return { layerIndex: i, neuronIndex: j, neuron: neuron };
                 }
             }
         }
     }
-    return null; // No neuron clicked
+    return null;
 }
 
 function startVibration(neuron) {
-    if (vibratingNeuron) return; // Prevent starting new vibration if one is active
+    if (vibratingNeuron) return;
     vibratingNeuron = neuron;
     vibrationStartTime = performance.now();
-    // Store current position before starting animation
+    // Reset position before starting animation ensures it starts from base
     neuron.x = neuron.baseX;
     neuron.y = neuron.baseY;
     requestAnimationFrame(animateVibration);
@@ -242,24 +286,25 @@ function animateVibration(currentTime) {
     const progress = elapsed / vibrationDuration;
 
     if (progress < 1) {
-        // Use base position for vibration calculation
-        const offsetX = (Math.random() - 0.5) * vibrationMagnitude * (1 - progress); // Magnitude decreases over time
-        const offsetY = (Math.random() - 0.5) * vibrationMagnitude * (1 - progress);
+        const decreaseFactor = 1 - progress; // Vibration decreases over time
+        const offsetX = (Math.random() - 0.5) * vibrationMagnitude * decreaseFactor;
+        const offsetY = (Math.random() - 0.5) * vibrationMagnitude * decreaseFactor;
 
+        // Update current position for drawing
         vibratingNeuron.x = vibratingNeuron.baseX + offsetX;
         vibratingNeuron.y = vibratingNeuron.baseY + offsetY;
 
         drawNetwork(); // Redraw with neuron in vibrating position
         requestAnimationFrame(animateVibration);
     } else {
-        // End vibration, reset position
-        vibratingNeuron.x = vibratingNeuron.baseX;
+        // End vibration: Ensure reset and final draw in non-vibrating state
+        vibratingNeuron.x = vibratingNeuron.baseX; // Reset position firmly
         vibratingNeuron.y = vibratingNeuron.baseY;
-        const neuronToStop = vibratingNeuron; // Keep reference
-        vibratingNeuron = null; // Clear vibrating neuron state
-        drawNetwork(); // Final redraw in original position for this neuron
-         // Ensure the specific neuron is drawn in its non-vibrating color
-         // This is handled by drawNetwork checking if neuron === vibratingNeuron
+        const neuronThatVibrated = vibratingNeuron; // Hold reference
+        vibratingNeuron = null; // Clear state *before* final draw
+
+        // Trigger one last draw ensuring the neuron is rendered in its normal state/color
+        drawNetwork();
     }
 }
 
@@ -273,16 +318,17 @@ canvas.addEventListener('click', (event) => {
 
     if (clicked) {
         const neuron = clicked.neuron;
-
-        if (neuron.isActive) { // Ensure it's an active neuron that was clicked
-             if (neuron.isUseless) {
-                // Remove neuron
+         // Only act if the neuron is currently active
+        if (neuron.isActive) {
+            if (neuron.isUseless) {
+                // Prune: Deactivate neuron and update count
                 neuron.isActive = false;
-                currentParameterCount -= parametersPerVisualNeuron; // Reduce simulated parameters
+                 // Prevent parameter count going below zero
+                currentParameterCount = Math.max(0, currentParameterCount - parametersPerVisualNeuron);
                 drawNetwork();
                 calculateMemory();
             } else {
-                // Vibrate neuron
+                // Vibrate important neuron
                 startVibration(neuron);
             }
         }
@@ -293,24 +339,17 @@ precisionSlider.addEventListener('input', (event) => {
     currentPrecisionLevel = parseInt(event.target.value);
     currentPrecision = precisionLevels[currentPrecisionLevel];
     precisionLabel.textContent = currentPrecision.name;
-    calculateMemory();
+    calculateMemory(); // Recalculate memory based on new precision
 });
 
-// Initialize precision label text based on starting slider value
-precisionLabel.textContent = precisionLevels[parseInt(precisionSlider.value)].name;
+// Add resize listener
+window.addEventListener('resize', resizeCanvas);
 
 // --- Initial Setup ---
-createNetwork();
-drawNetwork();
-calculateMemory(); // Initial memory calculation
+// Initialize precision label text
+precisionLabel.textContent = precisionLevels[currentPrecisionLevel].name;
 
-// Optional: Add a button to reset the network
-// <button id="resetButton">Reset</button>
-// const resetButton = document.getElementById('resetButton');
-// if (resetButton) {
-//     resetButton.addEventListener('click', () => {
-//         createNetwork();
-//         drawNetwork();
-//         calculateMemory();
-//     });
-// }
+// Initial canvas setup and drawing
+resizeCanvas(); // Use resize function for initial setup too
+
+// Note: createNetwork, drawNetwork, calculateMemory are called within resizeCanvas()
