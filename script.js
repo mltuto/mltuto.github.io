@@ -67,11 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
             miniGame: setupOptimizeServingButton // Kept here
         },
         '7': {
-            title: 'Step 7: The Partnership Plaza',
-            text: "And this is where we come in! At the Partnership Plaza, we join forces with our clients to bring their amazing ML-powered solutions to market, creating value and driving growth together. Your understanding of this entire quest is key to our shared success!",
+            title: 'Step 7: To go further',
+            text: "And this is where we come in! we join forces and get amazing ML resources to learn how to create value and driving growth together. Your understanding of this entire quest is key to our shared success!",
             image: 'images/step7.png',
             progress: 100,
-            miniGame: showQuiz
+            // *** MODIFICATION HERE: Changed from showQuiz to the new function ***
+            miniGame: setupFurtherLinkButton
         }
     };
 
@@ -99,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if(infoPanel) infoPanel.classList.add('visible');
-                if(quizContainer) quizContainer.classList.remove('visible');
+                if(quizContainer) quizContainer.classList.remove('visible'); // Ensure quiz is hidden when info opens
 
                 currentStep = parseInt(step);
                 updateProgressBar(data.progress, data.title);
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupDataIntegrationButton() {
         if (!miniGameArea) return;
         const dataIntegrationButton = document.createElement('button');
-        dataIntegrationButton.textContent = 'Data Integration';
+        dataIntegrationButton.textContent = 'Start Data Integration';
         dataIntegrationButton.addEventListener('click', () => {
             const width = 800; // Adjust as needed
             const height = 600; // Adjust as needed
@@ -163,13 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupDataCleaningPipelineButton() {
         if (!miniGameArea) return;
         const dataCleaningButton = document.createElement('button');
-        dataCleaningButton.textContent = 'Data Cleaning Pipeline';
+        dataCleaningButton.textContent = 'Start Data Cleaning Pipeline';
         dataCleaningButton.addEventListener('click', () => {
-             const width = 800; // Adjust as needed
-             const height = 600; // Adjust as needed
-             const left = (window.innerWidth - width) / 2;
-             const top = (window.innerHeight - height) / 2;
-             window.open('./MiniGame/DataClean/DataClean.html', '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+            const width = 800; // Adjust as needed
+            const height = 600; // Adjust as needed
+            const left = (window.innerWidth - width) / 2;
+            const top = (window.innerHeight - height) / 2;
+            window.open('./MiniGame/DataClean/DataClean.html', '_blank', `width=${width},height=${height},left=${left},top=${top}`);
         });
         miniGameArea.appendChild(dataCleaningButton);
     }
@@ -209,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function for the original Step 2 interaction (now replaced for Step 2)
     // This function can be kept or removed if not used elsewhere.
-      function setupCleanseGame() {
+    function setupCleanseGame() {
         if (!miniGameArea) return;
         miniGameArea.innerHTML = '<p>Click the dirty pixels!</p>';
         for(let i=0; i < 5; i++){
@@ -225,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             miniGameArea.appendChild(dirtyPixel);
         }
-      }
+    }
 
     function setupOptimizeModelButton() {
         if (!miniGameArea) return;
@@ -256,12 +257,34 @@ document.addEventListener('DOMContentLoaded', () => {
         miniGameArea.appendChild(optimizeButton);
     }
 
+    // *** NEW FUNCTION FOR STEP 7 ***
+    function setupFurtherLinkButton() {
+        if (!miniGameArea) return;
+        const furtherButton = document.createElement('button');
+        furtherButton.textContent = 'Learn More'; // You can change this text
+        furtherButton.addEventListener('click', () => {
+            const url = './MiniGame/further/further.html'; // The target URL
+            const width = 800; // Adjust as needed
+            const height = 600; // Adjust as needed
+            const left = (window.innerWidth - width) / 2;
+            const top = (window.innerHeight - height) / 2;
+            window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+        });
+        miniGameArea.appendChild(furtherButton);
+    }
 
+
+    // This function is now only called if explicitly assigned elsewhere,
+    // not directly by clicking Step 7 anymore.
     function showQuiz() {
         if(infoPanel) infoPanel.classList.remove('visible');
         if(quizContainer) quizContainer.classList.add('visible');
         console.log("Quiz should appear now!");
         // Populate quizContainer with questions here...
+        // Since this is no longer the primary action for Step 7,
+        // you might want to remove the quiz population logic or trigger it differently.
+        // For now, we leave the basic structure.
+        if (miniGameArea) miniGameArea.innerHTML = ''; // Clear any buttons if quiz takes over
     }
 
     // --- Custom Cursor Logic ---
