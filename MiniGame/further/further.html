@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>to go further // system online //</title> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #0a0a1a; /* Dark background */
+            color: #e0e0e0; /* Light grey text for contrast */
+            font-family: 'Orbitron', sans-serif; /* Apply futuristic font */
+            text-align: center;
+            margin: 0;
+            padding: 40px 20px;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            position: relative; /* Needed for pseudo-element positioning */
+        }
+
+        /* Subtle Scan Lines Overlay */
+        body::after {
+            content: "";
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 255, 255, 0.05), /* Faint cyan lines */
+                rgba(0, 255, 255, 0.05) 1px,
+                transparent 1px,
+                transparent 4px /* Adjust line thickness/spacing */
+            );
+            pointer-events: none; /* Allow clicks through the overlay */
+            z-index: 10; /* Ensure it's on top */
+        }
+
+        h1 {
+            color: #00ffff; /* Neon Cyan */
+            font-size: 2.5em; /* Larger heading */
+            font-weight: 700; /* Bolder */
+            letter-spacing: 3px; /* Wider spacing */
+            text-transform: uppercase; /* UPPERCASE */
+            margin-bottom: 50px;
+            /* Neon Glow Effect */
+            text-shadow: 
+                0 0 5px #00ffff, 
+                0 0 10px #00ffff, 
+                0 0 20px #00ffff, 
+                0 0 35px #00aaff, /* Slightly different blue for depth */
+                0 0 50px #00aaff;
+        }
+
+        .big-image {
+            width: 85%; 
+            max-width: 750px; /* Slightly adjusted */
+            height: auto; 
+            display: block; 
+            margin: 40px auto; /* Increased spacing */
+            
+            /* Neon Magenta Border & Glow */
+            border: 2px solid #ff00ff; 
+            box-shadow: 
+                0 0 8px #ff00ff,          /* Inner glow */
+                inset 0 0 8px rgba(255, 0, 255, 0.5), /* Inner inset glow */
+                0 0 15px #ff00ff,         /* Mid glow */
+                0 0 25px #ff00ff;         /* Outer glow */
+
+            /* Optional: Add a slight visual distortion/filter */
+            /* filter: contrast(1.1) brightness(1.05); */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+        }
+
+        /* Optional: Add a hover effect */
+        .big-image:hover {
+            transform: scale(1.02); /* Slightly enlarge on hover */
+             box-shadow: 
+                0 0 12px #ff00ff,         
+                inset 0 0 12px rgba(255, 0, 255, 0.6), 
+                0 0 25px #ff00ff,        
+                0 0 40px #ff00ff; /* Intensify glow on hover */
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>// to go further //</h1> 
+		<a href="https://link.springer.com/book/10.1007/978-3-031-65647-7">
+    <img src="book.png" 
+         alt="Placeholder - Replace with Cyberpunk Image 1" 
+         class="big-image">
+	</a>
+	
+	<a href="https://youtu.be/9vM4p9NN0Ts?si=XPt23dJhc8IHf8VI">
+    <img src="video.png" 
+         alt="Placeholder - Replace with Cyberpunk Image 2" 
+         class="big-image"></a>
+			
+		<a href="https://youtu.be/9vM4p9NN0Ts?si=XPt23dJhc8IHf8VI">
+		<img src="lkd.png" class="big-image" >
+		</a>
+
+	<a href="URL HF">
+	<img src="hfspace.png">
+	</a>
+	
+
+</body>
+</html>
