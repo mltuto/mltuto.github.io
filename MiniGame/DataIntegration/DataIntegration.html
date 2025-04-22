@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Embedding Visualization // CYBER-NET</title>
+    <style>
+        /* Global Styling */
+        body {
+            font-family: 'Share Tech Mono', monospace; /* Retro-futuristic monospace font */
+            margin: 0;
+            padding: 20px;
+            background-color: #0a0a0a; /* Deep dark background */
+            color: #00ffff; /* Cyan text for primary info */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            /* Background effect */
+            background-image: linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: -5px -5px;
+        }
+
+        /* Titles and Headers */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ff00ff; /* Magenta for main title */
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff; /* Neon glow */
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: flicker 1.5s infinite alternate; /* Subtle flicker effect */
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #00ffff; /* Cyan for section titles */
+            border-bottom: 2px solid #333; /* Darker separator */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #00ffff;
+            text-transform: uppercase;
+        }
+
+        /* Main Layout Container */
+        .container {
+            display: flex;
+            gap: 30px; /* Increased gap */
+            width: 95%; /* Slightly wider container */
+            max-width: 1200px; /* Max width */
+            height: 80vh;
+            position: relative; /* Needed for absolute positioning of connections */
+            z-index: 1; /* Ensure content is above background */
+        }
+
+        /* Panel Styling (Data Sources, Pre-training, Embedding) */
+        .data-sources,
+        .pre-training,
+        .embedding {
+            background-color: rgba(15, 15, 25, 0.9); /* Semi-transparent dark panel */
+            border-radius: 10px;
+            padding: 25px; /* Increased padding */
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2); /* Cyan panel glow */
+            position: relative; /* For potential internal positioning */
+            border: 1px solid rgba(0, 255, 255, 0.3); /* Subtle cyan border */
+        }
+
+        .data-sources {
+            flex: 1.2; /* Slightly larger data sources panel */
+            overflow-y: auto; /* Keep scrolling */
+        }
+
+        .pre-training {
+            flex: 0.8; /* Smaller pre-training panel */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center; /* Center content */
+        }
+
+        .embedding {
+            flex: 2; /* Largest embedding panel */
+            overflow: hidden; /* Keep plot contained */
+        }
+
+        /* Scrollbar Styling for Data Sources (Webkit - Chrome, Safari) */
+        .data-sources::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .data-sources::-webkit-scrollbar-track {
+            background: #111;
+            border-radius: 10px;
+        }
+
+        .data-sources::-webkit-scrollbar-thumb {
+            background-color: #ff00ff; /* Magenta scrollbar */
+            border-radius: 10px;
+            border: 2px solid #111;
+        }
+
+        /* Dataset Items */
+        .dataset {
+            display: flex;
+            align-items: center;
+            padding: 12px; /* Increased padding */
+            margin-bottom: 12px; /* Increased margin */
+            border-radius: 8px; /* Slightly larger radius */
+            cursor: pointer; /* Indicate clickable */
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            background-color: rgba(30, 30, 50, 0.5); /* Darker item background */
+            border: 1px solid transparent; /* Default transparent border */
+            user-select: none; /* Prevent text selection on click */
+        }
+
+        .dataset:hover {
+            background-color: rgba(50, 50, 80, 0.7); /* Lighter hover background */
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.3); /* Cyan glow on hover */
+            border: 1px solid rgba(0, 255, 255, 0.5); /* Subtle cyan border on hover */
+        }
+
+        .dataset.expanded {
+             background-color: rgba(50, 50, 80, 0.9); /* More opaque when expanded */
+             box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); /* Stronger glow when expanded */
+             border: 1px solid #00ffff; /* Cyan border when expanded */
+        }
+
+        .dataset img {
+            width: 36px; /* Slightly larger icons */
+            height: 36px;
+            margin-right: 20px;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5)); /* Cyan icon glow */
+        }
+
+        .dataset-info {
+            flex: 1;
+        }
+
+        .dataset-name {
+            font-weight: bold;
+            margin-bottom: 4px; /* Reduced margin */
+            color: #ff00ff; /* Magenta for dataset names */
+            text-shadow: 0 0 3px #ff00ff;
+        }
+
+        .dataset-description {
+            font-size: 0.9em; /* Slightly smaller font */
+            color: #aaa; /* Lighter gray for description */
+            display: none;
+        }
+
+        .dataset.expanded .dataset-description {
+            display: block;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.2); /* Dashed separator */
+        }
+
+        .dataset-checkbox {
+            margin-left: 15px; /* Increased margin */
+            transform: scale(1.2); /* Slightly larger checkbox */
+            accent-color: #ff00ff; /* Magenta checkbox color */
+            pointer-events: none; /* Prevent checkbox from being clicked directly */
+        }
+
+        /* Connection Line */
+        .connection {
+            position: absolute;
+            background-color: #00ffff; /* Cyan connection */
+            height: 3px; /* Thicker connection */
+            transform-origin: 0 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, background-color 0.3s ease-in-out;
+            z-index: 5;
+            pointer-events: none; /* Don't block clicks */
+            box-shadow: 0 0 8px #00ffff; /* Cyan connection glow */
+        }
+
+        .connection.active {
+            opacity: 1;
+            background-color: #ff00ff; /* Magenta when active/connected */
+            box-shadow: 0 0 10px #ff00ff; /* Magenta connection glow */
+        }
+
+        /* Embedding Visualization Area */
+        .plot-container {
+            height: 100%;
+            width: 100%;
+            position: relative;
+            border: 1px solid rgba(0, 255, 255, 0.3); /* Cyan border */
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #0f0f1a; /* Slightly different dark background for plot */
+        }
+
+        /* Data Points */
+        .data-point {
+            position: absolute;
+            width: 8px; /* Slightly larger points */
+            height: 8px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            box-shadow: 0 0 6px currentColor; /* Glow based on point color */
+        }
+
+        .data-point.visible {
+            opacity: 1;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            padding: 12px;
+            background-color: rgba(0, 0, 0, 0.9); /* Very dark, opaque background */
+            color: #00ffff; /* Cyan text */
+            border: 1px solid #00ffff; /* Cyan border */
+            border-radius: 5px;
+            font-size: 0.9em;
+            max-width: 300px; /* Wider tooltip */
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            pointer-events: none;
+            bottom: 20px; /* Position from bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); /* Cyan glow */
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Pre-training Section Elements */
+        .storage-icon {
+            width: 90px; /* Larger icon */
+            height: 160px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px #ff00ff); /* Magenta glow on storage icon */
+            animation: pulse 2s infinite ease-in-out; /* Pulse effect */
+        }
+
+        .pre-training h3 {
+            margin: 10px 0 5px 0; /* Adjusted margin */
+            color: #ff00ff; /* Magenta */
+            text-shadow: 0 0 5px #ff00ff;
+            text-transform: uppercase;
+        }
+
+        .dataset-counter {
+            font-size: 1em;
+            color: #aaa; /* Gray */
+        }
+
+         /* Pseudo-elements for futuristic flair */
+        .data-sources::before,
+        .pre-training::before,
+        .embedding::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #00ffff;
+            border-left: 2px solid #00ffff;
+        }
+
+         .data-sources::after,
+        .pre-training::after,
+        .embedding::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 10px;
+            height: 10px;
+            border-bottom: 2px solid #ff00ff;
+            border-right: 2px solid #ff00ff;
+        }
+
+        /* Keyframe Animations */
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff;
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 15px #ff00ff);
+            }
+            50% {
+                filter: drop-shadow(0 0 30px #ff00ff);
+            }
+        }
+
+        /* Import Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    </style>
+</head>
+<body>
+    <h1 class="header">Data Integration // Pre-Training Dataset</h1>
+    <div class="container">
+        <div class="data-sources">
+            <h2>Data Feeds</h2>
+            <div class="dataset" data-id="public_web">
+                <img src="data.png" alt="Public Web Data Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">Public Web Data</div>
+                    <div class="dataset-description">Network scrape of publicly accessible data streams, including forums, blogs, knowledge repositories, and news archives. Filtering protocols applied to exclude restricted zones and paywalls.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+            <div class="dataset" data-id="open_source">
+                <img src="data.png" alt="Open Source Datasets Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">Open Source Datasets</div>
+                    <div class="dataset-description">Curated and public-domain data troves: Common Crawl, The Pile, C4, WikiDumps, Project Gutenberg archive, and code repositories. Essential for broad spectrum baseline.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+            <div class="dataset" data-id="licensed">
+                <img src="data.png" alt="Licensed/Partnership Data Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">Licensed/Partnership Data</div>
+                    <div class="dataset-description">Restricted access data channels acquired via licensing protocols and corporate alliances. Includes proprietary knowledge banks and media archives.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+            <div class="dataset" data-id="proprietary">
+                <img src="data.png" alt="Proprietary/Internal Data Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">Proprietary/Internal Data</div>
+                    <div class="dataset-description">Confidential internal data constructs, operational logs, and synthetic data modules generated for specific training parameters. Access restricted by protocol.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+            <div class="dataset" data-id="books">
+                <img src="data.png" alt="Books and Academic Content Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">Books & Academic Archives</div>
+                    <div class="dataset-description">Digitized literature, academic journals, and research protocols. Access via open-archive links or licensed knowledge conduits. High-density information packages.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+            <div class="dataset" data-id="code">
+                <img src="data.png" alt="Code Repositories Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">Code Repositories</div>
+                    <div class="dataset-description">Public code streams from development platforms and programming hubs. Critical for advanced pattern recognition and generation subroutines.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+            <div class="dataset" data-id="social">
+                <img src="data.png" alt="Social Media and Forums Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">Network Chatter & Forums</div>
+                    <div class="dataset-description">Social Media and Forums, Public discourse streams from specified network hubs (e.g., Reddit, Stack Exchange). Processed under strict privacy and ethical compliance layers. Reflects real-time language flux.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+             <div class="dataset" data-id="multimodal">
+                <img src="data.png" alt="Multimodal Data Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">Multimodal Data img, audio, video</div>
+                    <div class="dataset-description">Interlinked sensory data streams: visual feeds, audio logs, haptic data paired with contextual metadata. Essential for comprehensive environment mapping.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+				             <div class="dataset" data-id="user">
+                <img src="data.png" alt="User-Contributed Data Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">User Contribution</div>
+                    <div class="dataset-description">Direct data input from registered operators, providing feedback, corrections, and new data vectors with explicit protocol authorization. High-trust data source.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+             <div class="dataset" data-id="synthetic">
+                <img src="data.png" alt="Synthetic Data Icon">
+                <div class="dataset-info">
+                    <div class="dataset-name">Synthetic Dataset</div>
+                    <div class="dataset-description">Algorithmic simulations and generated data clusters designed to fill null spaces and enhance pattern diversity within the matrix. Vital for robustness.</div>
+                </div>
+                <input type="checkbox" class="dataset-checkbox">
+            </div>
+        </div>
+
+        <div class="pre-training">
+            <img src="Storage.png" alt="Storage Icon" class="storage-icon">
+            <h3>Processing Core</h3>
+            <div class="dataset-counter">0 data streams connected</div>
+        </div>
+
+        <div class="embedding">
+            <h2>Embedding Space Projection</h2>
+            <div class="plot-container" id="plot">
+                </div>
+            <div class="tooltip" id="tooltip"></div>
+        </div>
+    </div>
+
+    <script>
+        // Dataset configuration - Updated colors and names
+        const datasets = {
+            'public_web': {
+                name: 'Public Web Data Stream',
+                color: '#00ffff', // Cyan
+                points: 50,
+                distribution: 'general'
+            },
+            'open_source': {
+                name: 'Open Source Archive',
+                color: '#00cc99', // Teal
+                points: 40,
+                distribution: 'general'
+            },
+            'licensed': {
+                name: 'Licensed Data Conduit',
+                color: '#ff00ff', // Magenta
+                points: 35,
+                distribution: 'specific'
+            },
+            'proprietary': {
+                name: 'Corporate Data Stack',
+                color: '#ff33cc', // Hot Pink
+                points: 25,
+                distribution: 'specific'
+            },
+            'books': {
+                name: 'Academic Literature Cache',
+                color: '#0099ff', // Blue
+                points: 30,
+                distribution: 'general'
+            },
+            'code': {
+                name: 'Code Repository Sync',
+                color: '#ffff00', // Yellow
+                points: 35,
+                distribution: 'specific'
+            },
+            'social': {
+                name: 'Network Chatter Feed',
+                color: '#ff6600', // Orange
+                points: 40,
+                distribution: 'general'
+            },
+            'multimodal': {
+                name: 'Multisensory Data Fusion',
+                color: '#cc00ff', // Purple
+                points: 30,
+                distribution: 'general'
+            },
+            'synthetic': {
+                name: 'Synthetic Data Injector',
+                color: '#00ff00', // Green
+                points: 45,
+                distribution: 'fill-gaps',
+                hasTooltip: true,
+                tooltipText: 'Synthetic data constructs are injected to optimize pattern distribution and fill detected null zones.' // Updated tooltip text
+            },
+            'user': {
+                name: 'User Contribution Node',
+                color: '#ffffff', // White/Bright
+                points: 20,
+                distribution: 'specific'
+            }
+        };
+
+        const selectedDatasets = new Set();
+        const connections = {};
+        let dataPointCounter = 0;
+
+        // Toggle dataset description visibility AND checkbox state
+        function toggleDataset(element) {
+            // Toggle description visibility
+            element.classList.toggle('expanded');
+
+            // Toggle the associated checkbox state
+            const checkbox = element.querySelector('.dataset-checkbox');
+            checkbox.checked = !checkbox.checked;
+
+            // Call the selection handler based on the new checkbox state
+            const datasetId = element.dataset.id;
+            toggleDatasetSelection(checkbox, datasetId);
+        }
+
+        // Handle dataset selection (remains the same, just called differently)
+        function toggleDatasetSelection(checkbox, datasetId) {
+            if (checkbox.checked) {
+                addDataset(datasetId);
+            } else {
+                removeDataset(datasetId);
+            }
+        }
+
+        // Add dataset to the pre-training collection
+        function addDataset(datasetId) {
+            if (selectedDatasets.has(datasetId)) return;
+
+            selectedDatasets.add(datasetId);
+
+            // Create connection line
+            const connection = document.createElement('div');
+            connection.className = 'connection';
+             // Add data-source attribute for potential specific styling/targeting
+            connection.dataset.source = datasetId;
+            document.querySelector('.container').appendChild(connection);
+            connections[datasetId] = connection;
+
+            // Position the connection line
+            updateConnectionPosition(datasetId);
+
+            // Add data points to the embedding visualization
+            addDataPoints(datasetId);
+
+            // Show tooltip for synthetic data
+            if (datasetId === 'synthetic' && datasets[datasetId].hasTooltip) {
+                showTooltip(datasets[datasetId].tooltipText);
+            }
+
+            // Update counter
+            document.querySelector('.dataset-counter').textContent = `${selectedDatasets.size} data streams connected`;
+
+            // Animate connection
+            setTimeout(() => {
+                connection.classList.add('active');
+            }, 50); // Slightly faster animation start
+        }
+
+        // Remove dataset from the pre-training collection
+        function removeDataset(datasetId) {
+            if (!selectedDatasets.has(datasetId)) return;
+
+            selectedDatasets.delete(datasetId);
+
+            // Remove connection
+            if (connections[datasetId]) {
+                connections[datasetId].classList.remove('active');
+                setTimeout(() => {
+                    connections[datasetId].remove();
+                    delete connections[datasetId];
+                }, 600); // Match transition duration
+            }
+
+            // Remove data points
+            removeDataPoints(datasetId);
+
+            // Update counter
+            document.querySelector('.dataset-counter').textContent = `${selectedDatasets.size} data streams connected`;
+             // Hide tooltip if synthetic data is unchecked
+             if (datasetId === 'synthetic') {
+                 hideTooltip();
+             }
+        }
+
+        // Update connection line position
+        function updateConnectionPosition(datasetId) {
+            if (!connections[datasetId]) return;
+
+            const sourceElement = document.querySelector(`.dataset[data-id="${datasetId}"]`);
+            const targetElement = document.querySelector('.storage-icon');
+
+            if (!sourceElement || !targetElement) return;
+
+            const sourceRect = sourceElement.getBoundingClientRect();
+            const targetRect = targetElement.getBoundingClientRect();
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+
+            // Calculate positions relative to the container
+            const startX = sourceRect.right - containerRect.left;
+            const startY = sourceRect.top - containerRect.top + sourceRect.height / 2;
+            const endX = targetRect.left - containerRect.left + targetRect.width / 2; // Center of the storage icon
+            const endY = targetRect.top - containerRect.top + targetRect.height / 2; // Center of the storage icon
+
+
+            const dx = endX - startX;
+            const dy = endY - startY;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+            const connection = connections[datasetId];
+            connection.style.width = `${length}px`;
+            connection.style.left = `${startX}px`;
+            connection.style.top = `${startY}px`;
+            connection.style.transform = `rotate(${angle}deg)`;
+        }
+
+        // Add data points to the embedding visualization
+        function addDataPoints(datasetId) {
+            const dataset = datasets[datasetId];
+            const plot = document.getElementById('plot');
+            const pointsCount = dataset.points;
+
+            // Get the approximate center and spread used for the "hole" markers
+            const holeCenterX = 65;
+            const holeCenterY = 50;
+            const holeMaxRadius = 13; // Based on marker radius logic (8+5)
+
+            for (let i = 0; i < pointsCount; i++) {
+                setTimeout(() => {
+                    const point = document.createElement('div');
+                    point.className = 'data-point';
+                    point.dataset.source = datasetId;
+                    point.id = `point-${dataPointCounter++}`;
+
+                    // Position the point based on the distribution type
+                    let x, y;
+
+                    if (dataset.distribution === 'fill-gaps') {
+                        // Distribute synthetic data points specifically within/around the hole area
+                        // Use polar coordinates centered on the hole area for a more radial fill
+                        const angle = Math.random() * Math.PI * 2;
+                        const radius = Math.random() * holeMaxRadius * 1.2; // Go slightly beyond the markers
+                        x = holeCenterX + Math.cos(angle) * radius;
+                        y = holeCenterY + Math.sin(angle) * radius;
+
+                    } else if (dataset.distribution === 'specific') {
+                        // Specific datasets cluster in certain areas (existing logic)
+                        const angle = Math.random() * Math.PI * 2;
+                        const radius = Math.random() * 15 + 5; // Tighter clusters ± 5-20 radius
+                        const specificCenterX = 50 + (Math.random() - 0.5) * 30;
+                        const specificCenterY = 50 + (Math.random() - 0.5) * 30;
+                        x = specificCenterX + Math.cos(angle) * radius;
+                        y = specificCenterY + Math.sin(angle) * radius;
+                    } else {
+                        // General datasets spread across the plot (existing logic)
+                        x = 5 + Math.random() * 90; // From 5% to 95%
+                        y = 5 + Math.random() * 90; // From 5% to 95%
+                    }
+
+                    // Clamp values to ensure they are within the plot area
+                    x = Math.max(2, Math.min(98, x));
+                    y = Math.max(2, Math.min(98, y));
+
+                    point.style.left = `${x}%`;
+                    point.style.top = `${y}%`;
+                    point.style.backgroundColor = dataset.color;
+
+                    plot.appendChild(point);
+
+                    setTimeout(() => {
+                        point.classList.add('visible');
+                    }, 50); // Faster point appearance
+                }, i * 30); // Stagger the appearance of points slightly faster
+            }
+        }
+
+        // Remove data points from a specific dataset
+        function removeDataPoints(datasetId) {
+            const points = document.querySelectorAll(`.data-point[data-source="${datasetId}"]`);
+            points.forEach((point, index) => {
+                setTimeout(() => {
+                    point.classList.remove('visible');
+                    setTimeout(() => {
+                        point.remove();
+                    }, 600); // Match transition duration
+                }, index * 15); // Faster point removal staggering
+            });
+        }
+
+        // Show tooltip with message
+        function showTooltip(message) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.textContent = message;
+            tooltip.classList.add('visible');
+             // Set a timeout to hide the tooltip after a few seconds
+             setTimeout(() => {
+                 hideTooltip();
+             }, 5000); // Hide after 5 seconds
+        }
+
+         // Hide tooltip
+        function hideTooltip() {
+             const tooltip = document.getElementById('tooltip');
+             tooltip.classList.remove('visible');
+        }
+
+
+        // Handle window resize to update connection positions
+        window.addEventListener('resize', () => {
+            selectedDatasets.forEach(datasetId => {
+                updateConnectionPosition(datasetId);
+            });
+        });
+
+        // Initialize with holes in the embedding visualization and add event listeners
+        window.onload = function() {
+            // Add click listeners to all dataset rows
+            document.querySelectorAll('.dataset').forEach(datasetElement => {
+                 datasetElement.addEventListener('click', function() {
+                     toggleDataset(this);
+                 });
+            });
+
+            // Create some initial "hole" indicators in the embedding space
+            const plot = document.getElementById('plot');
+
+            // Add some placeholder points to show the "hole" in the specific target area for synthetic data
+            // Use constants for the hole center and radius logic
+            const holeCenterX_init = 65;
+            const holeCenterY_init = 50;
+            const holeRadiusMin_init = 5;
+            const holeRadiusMax_init = 8; // Max radius for random spread in marker placement
+
+            for (let i = 0; i < 20; i++) { // More markers for emphasis
+                const marker = document.createElement('div');
+                marker.className = 'data-point';
+                 // Position markers around the hole center using the original logic
+                const angle = Math.random() * Math.PI * 2;
+                const radius = Math.random() * holeRadiusMax_init + holeRadiusMin_init;
+                const x = holeCenterX_init + Math.cos(angle) * radius;
+                const y = holeCenterY_init + Math.sin(angle) * radius;
+
+                 // Ensure markers are within bounds
+                 const clampedX = Math.max(2, Math.min(98, x));
+                 const clampedY = Math.max(2, Math.min(98, y));
+
+                marker.style.left = `${clampedX}%`;
+                marker.style.top = `${clampedY}%`;
+                marker.style.backgroundColor = '#333'; /* Dark gray markers */
+                marker.style.opacity = '0.5'; /* Semi-transparent */
+                marker.style.width = '10px'; /* Larger markers */
+                marker.style.height = '10px';
+                marker.style.border = '2px dashed #666'; /* Dashed border */
+                marker.style.boxShadow = 'none'; /* No glow on markers */
+                 marker.dataset.type = 'hole-marker'; // Identify markers
+
+                plot.appendChild(marker);
+
+                setTimeout(() => {
+                    marker.classList.add('visible');
+                }, i * 50 + 200); // Stagger appearance slightly after load
+            }
+        };
+    </script>
+</body>
+</html>
