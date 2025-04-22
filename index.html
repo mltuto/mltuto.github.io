@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The LLM  Building Mastery Quest!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>The LLM  Building Mastery Quest!</h1>
+
+    <div class="map-container" id="map">
+      <div class="dialog-box initial-greeting" id="algorithmo-greeting">
+        <img src="images/algorithmo.png" alt="Algorithmo Guide" class="character-icon">
+        <p>Welcome, brave GenAI adventurers! Embark on an epic journey to forge intelligent machines. Follow me through the Large Model Kingdom to understand their quest!</p>
+        <button id="start-quest-btn">Let's Go!</button>
+      </div>
+
+      <button class="map-spot step" id="step-1" data-step="1" aria-label="Step 1: The Data Mines"></button>
+      <button class="map-spot step" id="step-2" data-step="2" aria-label="Step 2: The Cleansing Springs"></button>
+      <button class="map-spot step" id="step-3" data-step="3" aria-label="Step 3: The Tiny Trial Grounds"></button>
+      <button class="map-spot step" id="step-4" data-step="4" aria-label="Step 4: The High-Performance Peaks"></button>
+      <button class="map-spot step" id="step-5" data-step="5" aria-label="Step 5: The Shrinking Chamber"></button>
+      <button class="map-spot step" id="step-6" data-step="6" aria-label="Step 6: The Serving City"></button>
+      <button class="map-spot step" id="step-7" data-step="7" aria-label="Step 7: The Partnership Plaza"></button>
+
+      <div class="dialog-box info-panel" id="info-panel">
+         <button class="close-btn" id="close-info">X</button>
+         <img src="images/placeholder.gif" alt="" id="info-image" class="info-visual">
+         <h2 id="info-title">Step Title</h2>
+         <p id="info-text">Step explanation will appear here.</p>
+         <div id="mini-game-area" class="mini-game"></div>
+      </div>
+
+      <div class="dialog-box quiz-container" id="quiz-container">
+         <button class="close-btn" id="close-quiz">X</button>
+         <h2>Quiz Time!</h2>
+         <p>Test your knowledge!</p>
+         <p style="text-align: center; margin-top: 20px;">[Quiz Content Placeholder]</p>
+         <button id="submit-quiz-btn">Submit Answers</button>
+         <p id="quiz-result"></p>
+      </div>
+
+    </div>
+
+    <div class="progress-bar-container">
+      <div class="progress-bar-label">Quest Progress:</div>
+      <div class="progress-bar-border">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+      <div id="progress-step-name">Start</div>
+	 </div>
+
+	 <div>
+	   <br>
+		1: The Data Mines - Key Figures <br>
+      2: The Cleansing Springs  - Key Figures<br>
+		3: The Tiny Trial Grounds - Key Figures<br>
+      4: The High-Performance Peaks - Key Figures<br>
+      5: The Shrinking Chamber - Key Figures<br>
+      6: The Serving City - Key Figures<br>
+      7: The Partnership Plaza - Key Figures<br>
+	</div>
+
+  </div>
+
+  <!-- <div id="custom-cursor"></div> <-- REMOVED -->
+
+  <script src="script.js"></script>
+</body>
+</html>

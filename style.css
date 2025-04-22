@@ -1,0 +1,270 @@
+/* Basic Reset & Pixel Font */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Press Start 2P', cursive;
+  background-color: #2c3e50; /* Dark blue background */
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 10px; /* Base pixel font size */
+  line-height: 1.6;
+  overflow: hidden; /* Prevent scrollbars if map is large */
+  /* cursor: none; <-- REMOVED */
+}
+
+.container {
+  width: 95%;
+  max-width: 900px; /* Adjust as needed */
+  text-align: center;
+  background-color: #34495e; /* Slightly lighter container bg */
+  padding: 20px;
+  border: 4px solid #ecf0f1; /* Pixelated border */
+  box-shadow: 0 0 0 4px #bdc3c7; /* Outer shadow border */
+}
+
+h1 {
+  font-size: 2.5em; /* Relative sizing */
+  margin-bottom: 20px;
+  color: #f1c40f; /* Gold color */
+  text-shadow: 2px 2px #e67e22; /* Orange shadow */
+}
+
+/* Map Area */
+.map-container {
+  position: relative;
+  /* IMPORTANT: Set width/height matching your map.png aspect ratio */
+  width: 100%;
+  /* Example: If map is 800x600 */
+  aspect-ratio: 800 / 600;
+  background-image: url('images/map.png'); /* Your main map image */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 3px solid #ecf0f1;
+  margin: 20px auto;
+  image-rendering: pixelated; /* Keep the pixel look sharp */
+}
+
+/* Interactive Spots */
+.map-spot {
+  position: absolute;
+  width: 50px; /* Adjust size as needed */
+  height: 50px;
+  background-color: rgba(255, 255, 0, 0.15); /* Semi-transparent yellow highlight */
+  border: 2px dashed #FFFF00;
+  transition: background-color 0.2s, transform 0.2s;
+  border-radius: 5px; /* Optional: slight rounding */
+  /* Remove default button styles */
+  padding: 0;
+  font-size: 0; /* Hide potential text inside */
+  color: transparent;
+  cursor: pointer; /* <-- CHANGED from none */
+}
+
+.map-spot:hover,
+.map-spot:focus {
+  background-color: rgba(255, 255, 0, 0.3);
+  transform: scale(1.1);
+  outline: none;
+}
+
+/* ---=== IMPORTANT: Position each spot ===--- */
+/* ---=== Adjust top/left percentages based on your map layout ===--- */
+#step-1 { top: 27%; left: 27%; } /* Example: Data Mines */
+#step-2 { top: 65%; left: 23%; } /* Example: Cleansing Springs */
+#step-3 { top: 65%; left: 35%; } /* Example: Tiny Trial Grounds */
+#step-4 { top: 57%; left: 49%; } /* Example: High-Performance Peaks */
+#step-5 { top: 45%; left: 60%; } /* Example: Shrinking Chamber */
+#step-6 { top: 65%; left: 75%; } /* Example: Serving City */
+#step-7 { top: 18%; left: 74%; } /* Example: Partnership Plaza */
+/* ---=======================================--- */
+
+
+/* Dialog Boxes (Initial Greeting, Info Panel, Quiz) */
+.dialog-box {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.85); /* Dark semi-transparent background */
+  border: 3px solid #ecf0f1;
+  padding: 15px 20px;
+  box-shadow: 5px 5px 0px #7f8c8d; /* Pixel shadow */
+  text-align: left;
+  z-index: 10;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  opacity: 0; /* Hidden by default */
+  transform: scale(0.9);
+  pointer-events: none; /* Don't intercept clicks when hidden */
+  max-width: 80%;
+}
+
+.dialog-box.visible {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto; /* Allow interaction when visible */
+}
+
+.initial-greeting {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9); /* Center initially */
+  opacity: 1; /* Show greeting by default */
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+.initial-greeting.hidden {
+   opacity: 0;
+   pointer-events: none;
+   transform: translate(-50%, -50%) scale(0.9);
+}
+
+.info-panel {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 400px; /* Adjust width */
+}
+
+.quiz-container {
+  /* Position as needed, maybe overlaps info panel or appears elsewhere */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 450px;
+}
+
+.character-icon {
+  float: left;
+  margin-right: 15px;
+  width: 50px; /* Adjust icon size */
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.dialog-box h2 {
+  font-size: 1.4em;
+  color: #f1c40f;
+  margin-bottom: 10px;
+}
+
+.dialog-box p {
+  margin-bottom: 15px;
+  font-size: 1em;
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #e74c3c; /* Red close button */
+  color: white;
+  border: 2px solid white;
+  font-family: 'Press Start 2P', cursive;
+  cursor: pointer; /* <-- CHANGED from none */
+  padding: 2px 6px;
+  font-size: 0.8em;
+}
+.close-btn:hover {
+  background: #c0392b;
+}
+
+/* Info Panel Visual */
+.info-visual {
+  display: block;
+  margin: 10px auto 15px;
+  max-width: 150px; /* Adjust as needed */
+  height: auto;
+  border: 2px solid #bdc3c7;
+  image-rendering: pixelated;
+  /* Example subtle animation */
+  animation: bounce 2s infinite ease-in-out;
+}
+
+/* Basic Button Styling */
+button {
+  font-family: 'Press Start 2P', cursive;
+  padding: 8px 15px;
+  background-color: #3498db; /* Blue button */
+  color: white;
+  border: 2px solid white;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+  cursor: pointer; /* <-- CHANGED from none */
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+#start-quest-btn {
+  display: block;
+  margin: 10px auto 0;
+  background-color: #2ecc71; /* Green start button */
+}
+#start-quest-btn:hover {
+  background-color: #27ae60;
+}
+
+
+/* Mini-game Area Placeholder */
+.mini-game {
+  margin-top: 15px;
+  padding: 10px;
+  border: 2px dashed #7f8c8d;
+  min-height: 50px;
+  text-align: center;
+  font-style: italic;
+  color: #bdc3c7;
+}
+
+/* Progress Bar */
+.progress-bar-container {
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* Space between elements */
+}
+
+.progress-bar-label {
+  font-size: 0.9em;
+}
+
+.progress-bar-border {
+  width: 50%; /* Adjust width */
+  height: 20px;
+  border: 2px solid #ecf0f1;
+  background-color: #7f8c8d; /* Empty bar color */
+  padding: 2px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%; /* Starts empty */
+  background-color: #2ecc71; /* Green fill color */
+  transition: width 0.5s ease-in-out;
+}
+
+#progress-step-name {
+  font-size: 0.9em;
+  min-width: 100px; /* Ensure space for step names */
+  text-align: left;
+}
+
+/* Simple Animation Example */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* --- Custom Animated Cursor Styling --- */
+/* --- REMOVED ENTIRE #custom-cursor BLOCK --- */
+
+/* --- REMOVED ENTIRE @keyframes walk-cycle-birch BLOCK --- */
