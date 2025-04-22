@@ -1,0 +1,512 @@
+/* Cyberpunk/Synthwave Theme */
+
+:root {
+    --bg-color: #0a0a0a; /* Dark background */
+    --text-color: #e0e0e0; /* Light grey text */
+    --neon-blue: #00ffff;
+    --neon-purple: #ff00ff;
+    --neon-pink: #ff66cc;
+    --neon-green: #ccff66;
+    --neon-yellow: #ffff66;
+    --neon-orange: #ff9933;
+    --neon-red: #ff3333;
+    --dark-grey: #1a1a1a;
+    --mid-grey: #333333;
+
+    /* Layer colors (match HTML and JS) */
+    --layer-1: #ff66cc;
+    --layer-2: #66ccff;
+    --layer-3: #ccff66;
+    --layer-4: #ffff66;
+    --layer-5: #ff9933;
+    --layer-6: #9966ff;
+    /* Add more as needed */
+
+    /* Activity Colors */
+    --compute-color: var(--neon-yellow); /* Yellow glow for compute */
+    --sync-color: var(--neon-blue);    /* Blue glow for sync */
+
+    /* Connection Colors */
+    --gpu-conn-color: rgba(0, 255, 0, 0.3); /* Subtle green for GPU connections */
+    --tpu-conn-color: rgba(255, 153, 51, 0.2); /* Subtle orange for TPU connections */
+}
+
+@keyframes pulse-subtle {
+    0% { opacity: 0.1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 0.1; }
+}
+
+
+body {
+    font-family: 'Courier New', Courier, monospace; /* Retro-futuristic font */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--mid-grey);
+}
+
+h1, h2, h3 {
+    color: var(--neon-blue);
+    text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 5px;
+}
+
+header p {
+    color: var(--neon-purple);
+    font-size: 1.1em;
+    margin-top: 0;
+}
+
+section {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: var(--dark-grey);
+}
+
+/* Neo-border style */
+.neo-border {
+    border: 1px solid var(--mid-grey);
+    box-shadow: 0 0 10px var(--neon-purple);
+}
+
+.neo-border:hover {
+     box-shadow: 0 0 15px var(--neon-blue);
+}
+
+
+/* Glitch effect for text */
+.glitch {
+    position: relative;
+    display: inline-block; /* Or block, depending on context */
+}
+
+/* Optional: Basic glitch animation - can be complex */
+/* @keyframes glitch {
+    0% { text-shadow: 2px 2px var(--neon-red), -2px -2px var(--neon-blue); }
+    25% { text-shadow: -2px 2px var(--neon-purple), 2px -2px var(--neon-green); }
+    50% { text-shadow: 2px -2px var(--neon-yellow), -2px 2px var(--neon-pink); }
+    75% { text-shadow: -2px -2px var(--neon-blue), 2px 2px var(--neon-red); }
+    100% { text-shadow: 2px 2px var(--neon-red), -2px 2px var(--neon-blue); }
+}
+.glitch h1, .glitch p {
+    animation: glitch 0.5s infinite linear alternate-reverse;
+} */
+
+
+.highlight {
+    color: var(--neon-green);
+    font-weight: bold;
+}
+
+.model-arch-panel .arch-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.model-image {
+    max-width: 200px; /* Adjust size as needed */
+    height: auto;
+    border: 1px solid var(--neon-blue);
+    box-shadow: 0 0 8px var(--neon-blue);
+}
+
+.model-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-grow: 1;
+}
+
+.model-layers .layer {
+    padding: 5px 10px;
+    border: 1px dashed var(--mid-grey);
+    text-align: center;
+    color: var(--bg-color); /* Dark text on colored layer */
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    min-width: 80px;
+}
+
+.control-panel .controls {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+     align-items: flex-end; /* Align items to the bottom */
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+label {
+    color: var(--neon-green);
+    font-size: 0.9em;
+}
+
+/* Custom select styling */
+.neo-select {
+    background-color: var(--mid-grey);
+    color: var(--text-color);
+    border: 1px solid var(--neon-blue);
+    padding: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    outline: none;
+    box-shadow: 0 0 5px var(--neon-blue);
+    cursor: pointer;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300ffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 12px auto;
+}
+
+.neo-select:focus {
+    box-shadow: 0 0 8px var(--neon-green);
+}
+
+/* Neo Button Styling */
+.training-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.neo-button {
+    background-color: var(--mid-grey);
+    color: var(--neon-blue);
+    border: 1px solid var(--neon-blue);
+    padding: 8px 15px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 0 5px var(--neon-blue);
+    transition: all 0.3s ease;
+}
+
+.neo-button:hover:not(:disabled) {
+    background-color: var(--neon-blue);
+    color: var(--bg-color);
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+.neo-button:active:not(:disabled) {
+     background-color: var(--neon-green);
+     color: var(--bg-color);
+     box-shadow: 0 0 10px var(--neon-green);
+}
+
+.neo-button:disabled {
+    border-color: var(--mid-grey);
+    color: var(--mid-grey);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.iteration-counter span {
+    color: var(--neon-yellow);
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+
+.visualization-area {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.accelerator-grid {
+    display: grid;
+    /* Approx 50 squares, let's try 5x10 grid */
+    grid-template-columns: repeat(10, 1fr); /* 10 columns */
+    grid-template-rows: repeat(5, 1fr); /* 5 rows */
+    gap: 5px; /* Gap between squares */
+    width: 100%;
+    max-width: 600px; /* Max size for the grid area */
+    min-height: 300px; /* Ensure grid has some height */
+    border: 2px solid var(--neon-purple);
+    padding: 10px;
+    box-shadow: 0 0 15px var(--neon-purple);
+    background-color: var(--mid-grey);
+}
+
+.accel-square {
+    width: 100%; /* Takes full grid cell width */
+    height: 50px; /* Fixed height, or use padding-bottom hack for aspect ratio */
+    background-color: var(--bg-color); /* Default off state */
+    border: 1px solid var(--mid-grey);
+    display: flex;
+    flex-direction: column; /* Stack text content */
+    justify-content: center;
+    align-items: center;
+    font-size: 0.6em; /* Smaller text for more info */
+    color: rgba(255, 255, 255, 0.7); /* Subtle numbering/text */
+    box-sizing: border-box;
+    transition: box-shadow 0.1s ease; /* Smooth transitions for activity */
+    position: relative; /* For connection lines */
+    overflow: hidden; /* Hide content if it overflows */
+    text-align: center;
+    line-height: 1.2; /* Closer text lines */
+    z-index: 0; /* Default z-index */
+}
+
+/* GPU Specific styles - Add classes via JS */
+.gpu-grid .accel-square {
+    border: 1px solid var(--neon-green); /* GPU border color */
+}
+/* Hint at column and bus connections - use multiple pseudo-elements */
+.gpu-grid .accel-square::before,
+.gpu-grid .accel-square::after,
+.gpu-grid .accel-square span.bus-h,
+.gpu-grid .accel-square span.bus-v {
+     content: '';
+     position: absolute;
+     background-color: var(--gpu-conn-color);
+     pointer-events: none; /* Don't interfere with mouse */
+     animation: pulse-subtle 2s infinite ease-in-out alternate; /* Subtle pulse */
+     z-index: -1; /* Behind the squares */
+}
+
+/* Vertical connection (column) */
+.gpu-grid .accel-square::before {
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    transform: translateX(-50%);
+}
+
+/* Horizontal BUS */
+.gpu-grid .accel-square::after {
+     left: 0;
+     top: 50%;
+     width: 100%;
+     height: 1px;
+     transform: translateY(-50%);
+}
+
+
+/* TPU Specific styles - Add classes via JS */
+.tpu-grid .accel-square {
+     border: 1px solid var(--neon-orange); /* TPU border color */
+     position: relative; /* For connection lines */
+}
+/* Hint at grid connection - Lines emanating from corners */
+.tpu-grid .accel-square::before,
+.tpu-grid .accel-square::after {
+     content: '';
+     position: absolute;
+     background-color: var(--tpu-conn-color);
+     width: 1px;
+     height: 1px; /* Start as a point */
+     transform-origin: top left;
+     animation: pulse-subtle 2s infinite ease-in-out alternate; /* Subtle pulse */
+     z-index: -1;
+}
+
+.tpu-grid .accel-square::before {
+    /* Diagonal towards top-left */
+     top: 0;
+     left: 0;
+     height: 10px; /* Extend outwards */
+     transform: rotate(-45deg) translateY(-50%);
+}
+
+.tpu-grid .accel-square::after {
+     /* Diagonal towards top-right */
+     top: 0;
+     right: 0;
+     height: 10px; /* Extend outwards */
+     transform: rotate(45deg) translateY(-50%);
+}
+/* Add more pseudo-elements or spans for other directions if needed for visual grid effect */
+
+
+/* Activity Visuals */
+.accel-square.compute-active {
+    box-shadow: 0 0 8px var(--compute-color), inset 0 0 5px var(--compute-color);
+    z-index: 1; /* Bring active squares to front slightly */
+}
+
+.accel-square.sync-active {
+     box-shadow: 0 0 8px var(--sync-color), inset 0 0 5px var(--sync-color);
+     z-index: 1;
+}
+
+/* Legend Styling */
+.legend {
+    padding: 15px;
+    border: 1px solid var(--mid-grey);
+    box-shadow: 0 0 8px var(--neon-green);
+    flex-grow: 1; /* Take up remaining space */
+    min-width: 200px; /* Ensure legend is readable */
+}
+
+.legend h3 {
+    margin-top: 0;
+    color: var(--neon-green);
+    text-shadow: 0 0 5px var(--neon-green);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    border: 1px solid var(--mid-grey);
+    box-sizing: border-box; /* Include border in size */
+}
+
+.legend-item .component-color {
+     /* Default component color */
+     background-color: #e0e0e0;
+}
+
+.legend-item .connection-color {
+    /* Placeholder for connection representation */
+    background-color: var(--neon-blue); /* Match sync color */
+    border: none; /* No border for connection visual */
+    opacity: 0.5; /* Semi-transparent */
+}
+
+.legend-item .compute-active {
+    /* Represents the glow/color used for compute activity */
+    border: 2px solid var(--compute-color);
+    box-shadow: 0 0 5px var(--compute-color);
+    background: none;
+}
+.legend-item .sync-active {
+     /* Represents the glow/color used for sync activity */
+    border: 2px solid var(--sync-color);
+    box-shadow: 0 0 5px var(--sync-color);
+     background: none;
+}
+
+
+/* Checkpoint Area */
+.checkpoint-panel h2 {
+     color: var(--neon-yellow);
+      text-shadow: 0 0 5px var(--neon-yellow), 0 0 10px var(--neon-yellow);
+}
+
+.checkpoint-area {
+    border-top: 1px dashed var(--mid-grey);
+    padding-top: 15px;
+    min-height: 60px; /* Give it some height */
+    display: flex; /* Arrange checkpoints in a row */
+    flex-wrap: wrap;
+    gap: 10px; /* Space between checkpoints */
+}
+
+.checkpoint-area img {
+    width: 70px; /* Size of checkpoint file icon */
+    height: auto;
+    filter: drop-shadow(0 0 5px var(--neon-yellow)); /* Subtle glow */
+}
+
+
+.explanation-panel #parallelismExplanation {
+    padding-top: 10px;
+    border-top: 1px dashed var(--mid-grey);
+}
+
+.explanation-panel #parallelismExplanation h4 {
+    color: var(--neon-blue);
+    margin-bottom: 5px;
+    text-shadow: 0 0 5px var(--neon-blue);
+}
+
+.explanation-panel #parallelismExplanation p {
+    margin-bottom: 15px;
+}
+
+.explanation-panel #parallelismExplanation strong {
+    color: var(--neon-green);
+}
+
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 10px;
+    border-top: 2px solid var(--mid-grey);
+    color: var(--neon-purple);
+    font-size: 0.9em;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .model-arch-panel .arch-container {
+        flex-direction: column;
+    }
+
+    .visualization-area {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .accelerator-grid {
+        max-width: none; /* Allow grid to fill container */
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); /* More flexible column count */
+        grid-template-rows: repeat(auto-fill, minmax(40px, 1fr)); /* Adjust rows */
+         height: auto; /* Auto height */
+         min-height: 250px;
+    }
+
+    .legend {
+        min-width: auto; /* Allow legend to shrink */
+    }
+
+     .control-panel .controls {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 20px;
+     }
+
+     .training-buttons {
+         flex-direction: column;
+         gap: 10px;
+     }
+     .neo-button {
+         width: 100%; /* Full width on small screens */
+         text-align: center;
+     }
+}

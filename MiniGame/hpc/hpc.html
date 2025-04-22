@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM training at Scale</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="glitch">
+            <h1>LLM training at Scale</h1>
+            <p>// UNPACKING THE ACCELERATED MATRIX //</p>
+        </header>
+
+        <section class="intro-panel neo-border">
+            <h2>> CORE PROTOCOLS</h2>
+            <p>Large models demand immense computational power. Training at scale involves distributing the workload across numerous accelerators. This schematic visualizes how the model, initially coded in <span class="highlight">PyTorch</span> or <span class="highlight">JAX</span> and compiled via <span class="highlight">PyTorch XLA</span> or <span class="highlight">XLA</span>, is mapped onto hardware accelerators – the silicon soul of the operation.</p>
+        </section>
+
+        <section class="model-arch-panel neo-border">
+            <h2>> MODEL ARCHITECTURE</h2>
+            <div class="arch-container">
+                <img src="archi-2.png" alt="LLM Model Architecture Representation" class="model-image">
+                <div class="model-layers">
+                    <div class="layer" data-layer="1" style="background-color: #ff66cc;">Layer 1</div>
+                    <div class="layer" data-layer="2" style="background-color: #66ccff;">Layer 2</div>
+                    <div class="layer" data-layer="3" style="background-color: #ccff66;">Layer 3</div>
+                    <div class="layer" data-layer="4" style="background-color: #ffff66;">Layer 4</div>
+                    <div class="layer" data-layer="5" style="background-color: #ff9933;">Layer 5</div>
+                    <div class="layer" data-layer="6" style="background-color: #9966ff;">Layer 6</div>
+                    </div>
+            </div>
+            <p>The model, a complex stack of interconnected layers (visualized here with distinct hues), must be efficiently distributed across hardware.</p>
+        </section>
+
+        <section class="control-panel neo-border">
+            <h2>> CONFIGURATION & TRAINING LOOP</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <label for="accelerator">Select Accelerator:</label>
+                    <select id="accelerator" class="neo-select">
+                        <option value="gpu">GPU (Graphics Processing Unit)</option>
+                        <option value="tpu">TPU (Tensor Processing Unit)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="parallelism">Select Parallelism Type:</label>
+                    <select id="parallelism" class="neo-select">
+                        <option value="data">Data Parallelism</option>
+                        <option value="model">Model Parallelism</option>
+                        <option value="pipeline">Pipeline Parallelism</option>
+                        </select>
+                </div>
+                 <div class="control-group">
+                    <label>Training Control:</label>
+                    <div class="training-buttons">
+                        <button id="startTrainingBtn" class="neo-button">// START LOOP</button>
+                        <button id="stopTrainingBtn" class="neo-button" disabled>// STOP LOOP</button>
+                        <button id="resetTrainingBtn" class="neo-button">// RESET</button>
+                    </div>
+                </div>
+                 <div class="control-group iteration-counter">
+                     <label>Current Iteration:</label>
+                     <span id="iterationCounter">0</span>
+                 </div>
+            </div>
+        </section>
+
+        <section class="visualization-panel neo-border">
+            <h2>> HARDWARE ALLOCATION // LIVE FEED</h2>
+            <div class="visualization-area">
+                <div class="accelerator-grid" id="acceleratorGrid">
+                    </div>
+                <div class="legend">
+                    <h3>> LEGEND</h3>
+                     <div class="legend-item"><span class="legend-color layer-color" style="background-color: #ff66cc;"></span> Layer 1 / Stage Part</div>
+                     <div class="legend-item"><span class="legend-color layer-color" style="background-color: #66ccff;"></span> Layer 2 / Stage Part</div>
+                     <div class="legend-item"><span class="legend-color layer-color" style="background-color: #ccff66;"></span> Layer 3 / Stage Part</div>
+                     <div class="legend-item"><span class="legend-color layer-color" style="background-color: #ffff66;"></span> Layer 4 / Stage Part</div>
+                     <div class="legend-item"><span class="legend-color layer-color" style="background-color: #ff9933;"></span> Layer 5 / Stage Part</div>
+                     <div class="legend-item"><span class="legend-color layer-color" style="background-color: #9966ff;"></span> Layer 6 / Stage Part</div>
+                     <div class="legend-item"><span class="legend-color component-color" style="background-color: #e0e0e0;"></span> W/O/C Resident + Data</div>
+                    <div class="legend-item"><span class="legend-color compute-active"></span> Compute Activity</div>
+                    <div class="legend-item"><span class="legend-color sync-active"></span> Synchronization / Communication</div>
+                     <div class="legend-item"><span class="legend-color connection-color" style="background-color: rgba(0, 255, 255, 0.3);"></span> Accelerator Connections</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="checkpoint-panel neo-border">
+             <h2>> CHECKPOINT LOG // SECURE DATA STATE</h2>
+             <div id="checkpointArea" class="checkpoint-area">
+                 </div>
+        </section>
+
+
+        <section class="explanation-panel neo-border">
+            <h2>> PARALLELISM PROTOCOL DETAILS</h2>
+            <div id="parallelismExplanation">
+                </div>
+        </section>
+
+        <footer class="glitch">// END OF TRANSMISSION //</footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
