@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synthwave Model Training Simulation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0d0a1b; /* Deep dark blue/purple */
+            color: #00ffff; /* Neon Cyan */
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0,255,255,0.1) 0%, rgba(13,10,27,0.8) 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff00ff; /* Neon Magenta */
+            text-align: center;
+            text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff00ff, 0 0 20px #ff00ff;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+             margin-top: 20px; /* Space below the legend */
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-around;
+            width: 90%;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .header-item {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 10px; /* Add padding to match model-data */
+        }
+
+        .model-image img {
+            width: 160px; /* Adjust size as needed */
+            height: auto;
+            margin-bottom: 10px;
+            border: 2px solid #ff00ff;
+            box-shadow: 0 0 8px #ff00ff;
+             background-color: rgba(0,0,0,0.5); /* Add some background for placeholder images */
+        }
+
+        .model-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #00ffff;
+        }
+
+        .training-row {
+            display: flex;
+            justify-content: space-around;
+            width: 90%;
+            margin-bottom: 35px; /* Increased margin for legend space */
+            align-items: center;
+            opacity: 0; /* Initially hidden */
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            border-bottom: 1px dashed rgba(255, 0, 255, 0.3); /* Add border here */
+            padding-bottom: 25px; /* Add padding below border for legend */
+        }
+
+         #result-row {
+             border-bottom: none; /* No border for the result row */
+             margin-bottom: 20px; /* Adjust margin for result row */
+         }
+
+        .training-row.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .day-label {
+            width: 100px; /* Fixed width for day label */
+            text-align: right;
+            font-size: 1.1em;
+            color: #ffff00; /* Neon Yellow */
+            text-shadow: 0 0 5px #ffff00;
+        }
+
+        .model-data {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Bars grow up from bottom */
+            height: 100px; /* Fixed height for bar container */
+            padding: 0 10px;
+            position: relative;
+            transition: border 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Add transition for hover effect */
+        }
+
+        /* Hover Highlight style */
+        #day1-row .model-data[data-model="modelA"]:hover,
+        #day2-row .model-data[data-model="modelA"]:hover,
+        #day3-row .model-data[data-model="modelB"]:hover {
+            border: 3px solid #00ff00; /* Neon Green Border */
+            box-shadow: 0 0 10px #00ff00; /* Neon Green Glow */
+            padding: 0 7px; /* Adjust padding slightly to account for border width */
+             cursor: pointer; /* Indicate interactivity */
+        }
+
+
+        .bars-container {
+             display: flex;
+             align-items: flex-end;
+             height: 100%;
+             width: 80px; /* Fixed width for the pair of bars */
+             position: relative; /* Needed for absolute legend positioning */
+             z-index: 1;
+        }
+
+
+        .bar {
+            width: 30px; /* Width of individual bar */
+            margin: 0 5px; /* Space between bars */
+            background-color: #ff00ff; /* Default bar color */
+            transition: height 0.8s ease-out; /* Animation for bar growth */
+            height: 0; /* Start at 0 height */
+            position: relative;
+            bottom: 0;
+            display: flex; /* Use flex to center text */
+            justify-content: center;
+            align-items: flex-start; /* Position text at the top of the bar */
+        }
+
+         .bar-label {
+            position: absolute;
+            top: -1.2em; /* Position above the bar */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            color: #fff; /* White text */
+            text-shadow: 0 0 3px #000; /* Small shadow for readability */
+             font-weight: bold;
+             opacity: 0; /* Start hidden */
+             transition: opacity 0.5s ease-out;
+             z-index: 10; /* Ensure label is above bar */
+             pointer-events: none; /* Prevent label from interfering with clicks */
+         }
+
+
+        .bar.benchmark1 {
+            background-color: #ff00ff; /* Magenta */
+            box-shadow: 0 0 5px #ff00ff;
+        }
+
+        .bar.mmlu {
+            background-color: #00ffff; /* Cyan */
+            box-shadow: 0 0 5px #00ffff;
+        }
+
+        /* Legend moved to top */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px; /* Increased gap */
+            font-size: 1.1em;
+            color: rgba(0, 255, 255, 0.9);
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+            margin-top: 20px; /* Space below explanation */
+            margin-bottom: 20px; /* Space above table */
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .legend-color {
+            width: 15px; /* Larger color swatches */
+            height: 15px; /* Larger color swatches */
+            margin-right: 8px; /* Increased space */
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Subtle shadow for colors */
+        }
+
+        .legend-color.benchmark1 {
+            background-color: #ff00ff;
+        }
+        .legend-color.mmlu {
+            background-color: #00ffff;
+        }
+
+
+        .next-day-button {
+            width: 150px;
+            text-align: center;
+             display: flex; /* Use flex to center button */
+             justify-content: center;
+             align-items: center;
+        }
+
+        button {
+            background-color: #00ff00; /* Neon Green */
+            color: #0d0a1b;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 25px;
+            box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #33ff33;
+            box-shadow: 0 0 15px #33ff33, 0 0 25px #33ff33, 0 0 40px #33ff33;
+        }
+
+        button:active {
+            background-color: #00cc00;
+            box-shadow: 0 0 8px #00cc00;
+        }
+
+        button:disabled {
+            background-color: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.5em;
+            font-family: 'Orbitron', sans-serif;
+            color: #ffff00; /* Neon Yellow */
+            text-shadow: 0 0 8px #ffff00, 0 0 15px #ffff00, 0 0 20px #ffff00;
+            opacity: 0; /* Initially hidden */
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+             margin-top: 20px; /* Space from the row above */
+        }
+
+         .result.visible {
+            opacity: 1;
+            transform: translateY(0);
+         }
+
+         .gcp-offer {
+             text-align: center;
+             margin-top: 40px;
+             font-size: 1.3em;
+             font-family: 'Orbitron', sans-serif;
+             color: #00ff00; /* Neon Green */
+             text-shadow: 0 0 8px #00ff00, 0 0 15px #00ff00;
+         }
+
+
+         .explanation {
+             width: 80%;
+             margin: 20px auto;
+             text-align: center;
+             font-size: 1.1em;
+             line-height: 1.6;
+             color: rgba(0, 255, 255, 0.8);
+             text-shadow: none; /* Remove text-shadow for body text */
+         }
+
+         .explanation strong {
+             color: #ff00ff;
+             text-shadow: 0 0 3px #ff00ff;
+         }
+          .explanation span {
+             color: #ffff00;
+             text-shadow: 0 0 3px #ffff00;
+         }
+    </style>
+</head>
+<body>
+
+    <h1>LLM Tiny Training Trials</h1>
+    <h2>Selecting the Optimal Architecture before Scaled Training</h2>
+
+    <div class="explanation">
+        <p>Choosing the right AI architecture before massive AI training is critical. We run a series of rapid, small-scale training sprints on different "tiny" models.</p>
+        <p>Over a few days, we monitor key performance indicators like <strong>Benchmark 1 Accuracy</strong> (representing general task proficiency) and <span>MMLU</span> (Measuring Massive Multitask Language Understanding) to see which architecture learns most effectively on limited data.</p>
+        <p>Click "Next Day" then mouse over the benchs to witness the evolution and identify the champion architecture for full-scale training!</p>
+    </div>
+
+     <div class="legend">
+        <div class="legend-item"><span class="legend-color benchmark1"></span> Bench 1</div>
+        <div class="legend-item"><span class="legend-color mmlu"></span> MMLU</div>
+    </div>
+
+
+    <div class="container">
+        <div class="header-row">
+            <div class="day-label"></div> <div class="header-item">
+                <div class="model-image"><img src="archi-1.png" alt="Architecture 1 Diagram"></div>
+                <div class="model-header">Tiny Model A</div>
+            </div>
+            <div class="header-item">
+                 <div class="model-image"><img src="archi-2.png" alt="Architecture 2 Diagram"></div>
+                <div class="model-header">Tiny Model B</div>
+            </div>
+            <div class="header-item">
+                 <div class="model-image"><img src="archi-3.png" alt="Architecture 3 Diagram"></div>
+                <div class="model-header">Tiny Model C</div>
+            </div>
+            <div class="next-day-button"></div> </div>
+
+        <div class="training-row" id="day1-row">
+            <div class="day-label">Training Day 1</div>
+            <div class="model-data" data-model="modelA" data-day="day1">
+                <div class="bars-container">
+                    <div class="bar benchmark1" data-accuracy="13"><span class="bar-label"></span></div>
+                    <div class="bar mmlu" data-accuracy="25"><span class="bar-label"></span></div>
+                </div>
+            </div>
+            <div class="model-data" data-model="modelB" data-day="day1">
+                 <div class="bars-container">
+                    <div class="bar benchmark1" data-accuracy="6"><span class="bar-label"></span></div>
+                    <div class="bar mmlu" data-accuracy="5"><span class="bar-label"></span></div>
+                 </div>
+            </div>
+            <div class="model-data" data-model="modelC" data-day="day1">
+                <div class="bars-container">
+                    <div class="bar benchmark1" data-accuracy="3"><span class="bar-label"></span></div>
+                    <div class="bar mmlu" data-accuracy="15"><span class="bar-label"></span></div>
+                </div>
+            </div>
+             <div class="next-day-button">
+                 <button id="next-day-btn-1">Next Day</button>
+             </div>
+        </div>
+
+        <div class="training-row" id="day2-row">
+            <div class="day-label">Training Day 2</div>
+             <div class="model-data" data-model="modelA" data-day="day2">
+                 <div class="bars-container">
+                    <div class="bar benchmark1" data-accuracy="15"><span class="bar-label"></span></div>
+                    <div class="bar mmlu" data-accuracy="30"><span class="bar-label"></span></div>
+                 </div>
+            </div>
+            <div class="model-data" data-model="modelB" data-day="day2">
+                 <div class="bars-container">
+                    <div class="bar benchmark1" data-accuracy="16"><span class="bar-label"></span></div>
+                    <div class="bar mmlu" data-accuracy="25"><span class="bar-label"></span></div>
+                 </div>
+            </div>
+            <div class="model-data" data-model="modelC" data-day="day2">
+                <div class="bars-container">
+                    <div class="bar benchmark1" data-accuracy="6"><span class="bar-label"></span></div>
+                    <div class="bar mmlu" data-accuracy="25"><span class="bar-label"></span></div>
+                </div>
+            </div>
+            <div class="next-day-button">
+                <button id="next-day-btn-2">Next Day</button>
+            </div>
+        </div>
+
+        <div class="training-row" id="day3-row">
+            <div class="day-label">Training Day 3</div>
+            <div class="model-data" data-model="modelA" data-day="day3">
+                 <div class="bars-container">
+                    <div class="bar benchmark1" data-accuracy="16"><span class="bar-label"></span></div>
+                    <div class="bar mmlu" data-accuracy="31"><span class="bar-label"></span></div>
+                 </div>
+            </div>
+            <div class="model-data" data-model="modelB" data-day="day3">
+                 <div class="bars-container">
+                    <div class="bar benchmark1" data-accuracy="23"><span class="bar-label"></span></div>
+                    <div class="bar mmlu" data-accuracy="35"><span class="bar-label"></span></div>
+                 </div>
+            </div>
+            <div class="model-data" data-model="modelC" data-day="day3">
+                <div class="bars-container">
+                    <div class="bar benchmark1" data-accuracy="10"><span class="bar-label"></span></div>
+                    <div class="bar mmlu" data-accuracy="27"><span class="bar-label"></span></div>
+                </div>
+            </div>
+             <div class="next-day-button">
+                 <button id="next-day-btn-3">Next Day</button>
+             </div>
+        </div>
+
+        <div class="training-row" id="result-row" style="min-height: 150px;">
+             <div class="day-label">Result</div>
+             <div class="model-data"></div><div class="model-data">
+                 <div class="result" id="final-result">Let's scale Model B</div>
+					
+
+
+
+
+
+
+             </div>
+             <div class="model-data"></div><div class="next-day-button"></div> </div>
+
+    </div>
+
+     <div class="gcp-offer">
+        GCP Offer : ML Platform to train and monitor experiments
+    </div>
+
+
+    <script>
+        const totalDays = 3;
+        let currentDay = 0;
+        // Scale factor for bar heights. Max accuracy is 100, container height is 100px.
+        // So 1% accuracy = 1px height. Scale 1 means 1:1 mapping for percentage to px.
+        const barHeightScale = 1;
+
+        const trainingRows = document.querySelectorAll('.training-row');
+        const nextDayButtons = document.querySelectorAll('.next-day-button button');
+        const finalResult = document.getElementById('final-result');
+
+        // Initially hide all training rows except Day 1
+        trainingRows.forEach((row, index) => {
+            if (index === 0) {
+                 row.classList.add('visible'); // Show Day 1 row
+            } else {
+                 row.classList.remove('visible');
+            }
+        });
+        finalResult.classList.remove('visible'); // Hide result initially
+
+
+        // Function to update bar heights and labels based on data-accuracy attribute
+        function updateBarHeightsAndLabels(day) {
+            const dayRow = document.getElementById(`day${day}-row`);
+            if (dayRow) {
+                const bars = dayRow.querySelectorAll('.bar');
+                bars.forEach(bar => {
+                    const accuracy = parseInt(bar.getAttribute('data-accuracy'), 10);
+                    // Scale accuracy to container height (100px)
+                    const height = (accuracy / 100) * 100 * barHeightScale;
+                    bar.style.height = `${height}px`;
+
+                    // Update label text and show it
+                    const label = bar.querySelector('.bar-label');
+                    if (label) {
+                        label.textContent = `${accuracy}%`;
+                        label.style.opacity = 1; // Make label visible
+                    }
+                });
+            }
+        }
+
+        // Function to show the next day's data
+        function showNextDay() {
+            if (currentDay < totalDays) {
+                currentDay++;
+                const currentDayRow = document.getElementById(`day${currentDay}-row`);
+                const currentDayButton = document.getElementById(`next-day-btn-${currentDay}`);
+                 const prevDayButton = document.getElementById(`next-day-btn-${currentDay - 1}`);
+
+
+                if (currentDayRow) {
+                    currentDayRow.classList.add('visible');
+                    // Update bars AND labels for the newly visible day
+                    updateBarHeightsAndLabels(currentDay);
+                }
+
+                // Hide the button that was just clicked (or the previous day's button)
+                if (prevDayButton) {
+                     prevDayButton.style.display = 'none';
+                }
+
+                // Show the next button, unless it's the last day
+                if (currentDay < totalDays) {
+                    if(currentDayButton) currentDayButton.style.display = 'flex'; // Use flex to keep button centered
+                } else {
+                    // If it's the last day, hide its button and show the result
+                     if(currentDayButton) currentDayButton.style.display = 'none';
+                     document.getElementById('result-row').classList.add('visible');
+                     finalResult.classList.add('visible');
+                }
+
+            }
+        }
+
+        // Add event listeners to buttons
+        nextDayButtons.forEach(button => {
+            button.addEventListener('click', showNextDay);
+            button.style.display = 'none'; // Hide all buttons initially
+        });
+
+        // Initial state setup
+        // Update bars and labels for Day 1 on load
+        updateBarHeightsAndLabels(1);
+        document.getElementById('next-day-btn-1').style.display = 'flex'; // Show Day 1 button
+        currentDay = 1; // Set currentDay to 1 to start
+
+    </script>
+
+</body>
+</html>
