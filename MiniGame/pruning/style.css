@@ -1,0 +1,71 @@
+/* Keep your existing CSS */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.game-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    margin-top: 0;
+    color: #333;
+}
+
+.controls {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.controls label {
+    font-weight: bold;
+}
+
+#nnCanvas {
+    border: 1px solid #ccc;
+    background-color: #eee;
+    display: block;
+    margin: 0 auto 15px auto;
+}
+
+.memory-info {
+    font-weight: bold;
+    color: #007bff;
+    /* Updated display to potentially stack percentage below */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#memory-display {
+    display: inline-block; /* Ensure it doesn't take full width in flex column */
+    margin-bottom: 5px; /* Space between value and percentage */
+}
+
+#saved-percentage {
+    font-size: 0.9em;
+    color: #28a745; /* Green color for savings */
+    display: inline-block; /* Ensure it doesn't take full width */
+}
+
+
+.info {
+    font-size: 0.9em;
+    color: #666;
+    max-width: 600px; /* Limit info width */
+    margin: 0 auto;
+}

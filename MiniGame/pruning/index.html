@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Model Optimizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>LLM Model Optimizer</h1>
+        <div class="controls">
+ 
+            <div class="memory-info">
+                LLM Weights Memory Footprint: <span id="memory-display">0 GB</span>
+                <span id="saved-percentage"> ( 0.00% saved ) </span> </div>
+        </div>Pruning : <br>
+				Click on "useless" (faded) neurons to remove them and reduce LLM memory footprint.
+            Removing a visual neuron simulates pruning a large group of parameters.
+
+        <canvas id="nnCanvas"></canvas>
+		             <label for="precision">Quantization:
+						 reducing the neurons weight types 32 bits , 16bits, 8 bits 4 bits, reduce memory footprint while trying to keep the highest LLM Accuracy possible</label>
+            <input type="range" id="precision" min="0" max="3" value="0"> <span id="precision-label">BF16</span>
+        <div class="info">
+            
+				
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
