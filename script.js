@@ -18,9 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.getElementById('progress-bar');
     const progressStepName = document.getElementById('progress-step-name');
 
-    // --- Element for Custom Cursor ---
-    // const customCursor = document.getElementById('custom-cursor'); // <-- REMOVED
-
     // --- Step Data ---
     const stepData = {
         '1': {
@@ -137,8 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
             gameFunction(); // Execute the function associated with the step
         } else {
              // Only add the placeholder if no specific game function exists
-             // This prevents showing "(No specific interaction here)" when a game button is present
-             // but the function doesn't add content immediately (e.g., the quiz setup)
              if (gameFunction === null) {
                  miniGameArea.innerHTML = '<p>(No specific interaction here)</p>';
              }
@@ -151,11 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataIntegrationButton = document.createElement('button');
         dataIntegrationButton.textContent = 'Start Data Integration';
         dataIntegrationButton.addEventListener('click', () => {
-            const width = 800; // Adjust as needed
-            const height = 600; // Adjust as needed
-            const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
-            window.open('./MiniGame/DataIntegration/DataIntegration.html', '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+            // REMOVED the features string to favor opening in a new tab
+            window.open('./MiniGame/DataIntegration/DataIntegration.html', '_blank');
         });
         miniGameArea.appendChild(dataIntegrationButton);
     }
@@ -166,11 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataCleaningButton = document.createElement('button');
         dataCleaningButton.textContent = 'Start Data Cleaning Pipeline';
         dataCleaningButton.addEventListener('click', () => {
-            const width = 800; // Adjust as needed
-            const height = 600; // Adjust as needed
-            const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
-            window.open('./MiniGame/DataClean/DataClean.html', '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+             // REMOVED the features string to favor opening in a new tab
+            window.open('./MiniGame/DataClean/DataClean.html', '_blank');
         });
         miniGameArea.appendChild(dataCleaningButton);
     }
@@ -181,11 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const tinyTrainButton = document.createElement('button');
         tinyTrainButton.textContent = 'Start Tiny Train Game';
         tinyTrainButton.addEventListener('click', () => {
-            const width = 800; // Adjust as needed
-            const height = 600; // Adjust as needed
-            const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
-            window.open('./MiniGame/TinyTrain/TinyTrain.html', '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+            // REMOVED the features string to favor opening in a new tab
+            window.open('./MiniGame/TinyTrain/TinyTrain.html', '_blank');
         });
         miniGameArea.appendChild(tinyTrainButton);
     }
@@ -197,12 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
         hpcButton.textContent = 'Explore High-Performance Peaks'; // Or any text you prefer
         hpcButton.addEventListener('click', () => {
             const url = './MiniGame/hpc/hpc.html'; // The URL you provided
-            const width = 800; // Adjust as needed
-            const height = 600; // Adjust as needed
-            const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
-            // '_blank' opens the URL in a new window or tab
-            window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+            // REMOVED the features string to favor opening in a new tab
+            window.open(url, '_blank');
         });
         miniGameArea.appendChild(hpcButton);
     }
@@ -216,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for(let i=0; i < 5; i++){
             let dirtyPixel = document.createElement('span');
             dirtyPixel.textContent = 'X';
-            // dirtyPixel.style.cursor = 'none'; // <-- REMOVED
             dirtyPixel.style.cursor = 'pointer'; // <-- OPTIONAL: Change to pointer for clarity
             dirtyPixel.style.color = 'brown';
             dirtyPixel.style.margin = '5px';
@@ -233,11 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const optimizeButton = document.createElement('button');
         optimizeButton.textContent = 'Optimize Model';
         optimizeButton.addEventListener('click', () => {
-            const width = 600; // Adjust as needed
-            const height = 400; // Adjust as needed
-            const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
-            window.open('./MiniGame/pruning/index.html', '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+            // REMOVED the features string to favor opening in a new tab
+            window.open('./MiniGame/pruning/index.html', '_blank');
         });
         miniGameArea.appendChild(optimizeButton);
     }
@@ -248,11 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
         optimizeButton.textContent = 'Optimize Serving';
         optimizeButton.addEventListener('click', () => {
             const url = 'https://huggingface.co/spaces/fredmo/gpu-inference-pulse-slm';
-            const width = 800; // Adjust as needed
-            const height = 600; // Adjust as needed
-            const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
-            window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+             // REMOVED the features string to favor opening in a new tab
+            window.open(url, '_blank');
         });
         miniGameArea.appendChild(optimizeButton);
     }
@@ -264,11 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
         furtherButton.textContent = 'Learn More'; // You can change this text
         furtherButton.addEventListener('click', () => {
             const url = './MiniGame/further/further.html'; // The target URL
-            const width = 800; // Adjust as needed
-            const height = 600; // Adjust as needed
-            const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
-            window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+            // REMOVED the features string to favor opening in a new tab
+            window.open(url, '_blank');
         });
         miniGameArea.appendChild(furtherButton);
     }
@@ -281,14 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if(quizContainer) quizContainer.classList.add('visible');
         console.log("Quiz should appear now!");
         // Populate quizContainer with questions here...
-        // Since this is no longer the primary action for Step 7,
-        // you might want to remove the quiz population logic or trigger it differently.
-        // For now, we leave the basic structure.
         if (miniGameArea) miniGameArea.innerHTML = ''; // Clear any buttons if quiz takes over
     }
-
-    // --- Custom Cursor Logic ---
-    /* --- REMOVED ENTIRE if (customCursor) BLOCK --- */
 
     // --- Initial State ---
     updateProgressBar(0, "Start"); // Set progress bar to 0 initially
